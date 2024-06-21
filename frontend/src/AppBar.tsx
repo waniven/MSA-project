@@ -13,10 +13,21 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Container from '@mui/material/Container';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import { useThemeContext } from './theme';
 
-const pages = ['Home', 'Lunch', 'Social Events', 'Staff Directory'];
-const settings = ['Profile', 'Account', 'Logout'];
+const pages = [
+  { name: 'Home', path: '/' },
+  { name: 'Lunch', path: '/lunch' },
+  { name: 'Social Events', path: '/social-events' },
+  { name: 'Staff Directory', path: '/staff-directory' }
+];
+
+const settings = [
+  { name: 'Profile', path: '/profile' },
+  { name: 'Account', path: '/account' },
+  { name: 'Logout', action: 'logout' }
+];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -36,6 +47,12 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logout clicked");
+    // Example: call logout API, clear session, redirect to login page, etc.
   };
 
   return (
@@ -91,8 +108,12 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {page.name}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -119,18 +140,20 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.name}
+                component={Link}
+                to={page.path}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center', mx: 1 }}>
             <Tooltip title="Toggle light/dark theme">
-              <IconButton sx={{ ml: 1, mx: 1 }} onClick={toggleTheme} color="inherit">
+              <IconButton sx={{ mx: 1 }} onClick={toggleTheme} color="inherit">
                 {currentTheme === 'light' ? <Brightness7 /> : <Brightness4 />}
               </IconButton>
             </Tooltip>
@@ -156,8 +179,24 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem
+                  key={setting.name}
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    if (setting.action === 'logout') {
+                      handleLogout();
+                    }
+                  }}
+                >
+                  {setting.path ? (
+                    <Typography textAlign="center">
+                      <Link to={setting.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {setting.name}
+                      </Link>
+                    </Typography>
+                  ) : (
+                    <Typography textAlign="center">{setting.name}</Typography>
+                  )}
                 </MenuItem>
               ))}
             </Menu>
