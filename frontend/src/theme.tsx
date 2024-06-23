@@ -22,6 +22,7 @@ const lightTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#1251b0', // Light mode AppBar (accent color)
+          hoverColor: '#0f408a'
         },
       },
     },
@@ -48,6 +49,7 @@ const darkTheme = createTheme({
           styleOverrides: {
             root: {
               backgroundColor: '#172740', // Light mode AppBar (accent color)
+              hoverColor: '#294470'
         },
       },
     },
