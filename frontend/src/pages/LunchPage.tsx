@@ -17,7 +17,7 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
 const LunchPage = () => {
   return (
     <div>
-      {/* Other components */}
+      {<h1>Lunch Page</h1>/* Other components */}
       <FloatingButton>
         <AddIcon />
       </FloatingButton>
