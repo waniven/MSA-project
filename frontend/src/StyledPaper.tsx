@@ -14,9 +14,9 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     [theme.breakpoints.down('md')]: {
-    margin: 0, // Remove buffer space on smaller screens
-    minHeight: '94vh', // Full height without margin
-    minWidth: '97vw', // Full width without margin
+    margin: 0, 
+    minHeight: '94vh', 
+    minWidth: '97vw', 
 }}));
 
 export default StyledPaper;

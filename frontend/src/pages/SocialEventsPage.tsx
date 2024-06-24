@@ -14,6 +14,10 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
     '&:hover': {
     backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor, 
   },
+  [theme.breakpoints.down('md')]: {
+    bottom: 10,
+    right: 10,
+  }
 }));
 
 const SocialEventsPage = () => {
