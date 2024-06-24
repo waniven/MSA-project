@@ -6,8 +6,8 @@ const lightTheme = createTheme({
   palette: {
     mode: 'light',
     background: {
-      default: '#e3e3e3', // Light mode background color
-      paper: '#e3e3e3', // the dropdown pannel
+      default: '#e6eeff', // Light mode background color
+      paper: '#f2f2f2', // the dropdown pannel
     },
     primary: {
       main: '#000000', // logo and icon colour
@@ -22,7 +22,7 @@ const lightTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: '#1251b0', // Light mode AppBar (accent color)
-          hoverColor: '#0f408a'
+          hoverColor: '#0f408a',
         },
       },
     },
@@ -48,7 +48,7 @@ const darkTheme = createTheme({
         MuiAppBar: {
           styleOverrides: {
             root: {
-              backgroundColor: '#172740', // Light mode AppBar (accent color)
+              backgroundColor: '#22395e', // Light mode AppBar (accent color)
               hoverColor: '#294470'
         },
       },

@@ -1,7 +1,13 @@
 import React from 'react';
+import StyledPaper from '../StyledPaper';
 
-function ProfilePage() {
-  return <h1>Profile page</h1>;
-}
+const ProfilePage = () => {
+  return (
+  <StyledPaper elevation={8}>
+    <div>
+      <h1>Profile Page</h1>
+    </div>
+  </StyledPaper>
+);};
 
 export default ProfilePage;
