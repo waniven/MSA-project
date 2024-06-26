@@ -7,7 +7,7 @@ const lightTheme = createTheme({
     mode: 'light',
     background: {
       default: '#e6eeff', // Light mode background color
-      paper: '#f2f2f2', // the dropdown pannel
+      paper: '#ffffff', // the dropdown pannel
     },
     primary: {
       main: '#000000', // logo and icon colour
@@ -23,6 +23,7 @@ const lightTheme = createTheme({
         root: {
           backgroundColor: '#1251b0', // Light mode AppBar (accent color)
           hoverColor: '#0f408a',
+          element: '#e6eeff'
         },
       },
     },
@@ -49,7 +50,8 @@ const darkTheme = createTheme({
           styleOverrides: {
             root: {
               backgroundColor: '#22395e', // Light mode AppBar (accent color)
-              hoverColor: '#294470'
+              hoverColor: '#294470',
+              element: '#294470'
         },
       },
     },
