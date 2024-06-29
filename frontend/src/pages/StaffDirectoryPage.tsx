@@ -1,7 +1,13 @@
 import React from 'react';
+import StyledPaper from '../StyledPaper';
 
-function StaffDirectoryPage() {
-  return <h1>Staff Directory Page</h1>;
-}
+const StaffDirectoryPage = () => {
+  return (
+  <StyledPaper elevation={8}>
+    <div>
+      <h1>Staff Directory Page</h1>
+    </div>
+  </StyledPaper>
+);};
 
 export default StaffDirectoryPage;

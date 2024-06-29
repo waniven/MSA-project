@@ -1,27 +1,34 @@
 import React from 'react';
-import { Fab } from '@mui/material';
+import { Fab, Paper } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
+import StyledPaper from '../StyledPaper';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
-  bottom: 16,
-  right: 16,
+  bottom: 25,
+  right: 25,
   backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-  color: '#ffffff', 
-    '&:hover': {
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor, 
-  },
+  color: '#ffffff',
+  '&:hover': {
+    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+  },[theme.breakpoints.down('md')]: {
+    bottom: 10,
+    right: 10,
+  }
 }));
 
 const LunchPage = () => {
   return (
-    <div>
-      {<h1>Lunch Page</h1>/* Other components */}
+    <StyledPaper elevation={8}>
+      <div>
+        <h1>Lunch Page</h1>
+        {/* Other components */}
+      </div>
       <FloatingButton>
         <AddIcon />
       </FloatingButton>
-    </div>
+    </StyledPaper>
   );
 };
 

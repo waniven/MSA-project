@@ -1,7 +1,15 @@
 import React from 'react';
+import StyledPaper from '../StyledPaper';
 
-function AccountPage() {
-  return <h1>Account page</h1>;
-}
+const AccountPage = () => {
+  return (
+    <StyledPaper elevation={8}>
+      <div>
+        <h1>Account page</h1>
+      </div>
+      </StyledPaper>
+  );
+};
+
 
 export default AccountPage;
