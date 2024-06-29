@@ -26,40 +26,42 @@ const HomePage: React.FC = () => {
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper elevation={6} sx={{ padding: 2 }}>
-            <h2>Lunch Plans</h2>
-            <div className="information-card-container">
-              {isSmallCard ? (
-                <List>
-                  <ListItem>
-                    <InformationCard />
-                  </ListItem>
-                  <ListItem>
-                    <InformationCard />
-                  </ListItem>
-                  <ListItem>
-                    <InformationCard />
-                  </ListItem>
-                  <ListItem>
-                    <InformationCard />
-                  </ListItem>
-                </List>
-              ) : (
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <InformationCard />
+          <Paper elevation={6} sx={{ padding: 2, display: 'flex', justifyContent: 'center' }}>
+            <div>
+              <h2>Lunch Plans</h2>
+              <div className="information-card-container">
+                {isSmallCard ? (
+                  <List>
+                    <ListItem>
+                      <InformationCard showImage={false} />
+                    </ListItem>
+                    <ListItem>
+                      <InformationCard showImage={false} />
+                    </ListItem>
+                    <ListItem>
+                      <InformationCard showImage={false} />
+                    </ListItem>
+                    <ListItem>
+                      <InformationCard showImage={false} />
+                    </ListItem>
+                  </List>
+                ) : (
+                  <Grid container spacing={2} justifyContent="center">
+                    <Grid item>
+                      <InformationCard showImage={false} />
+                    </Grid>
+                    <Grid item>
+                      <InformationCard showImage={false} />
+                    </Grid>
+                    <Grid item>
+                      <InformationCard showImage={false} />
+                    </Grid>
+                    <Grid item>
+                      <InformationCard showImage={false} />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <InformationCard />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <InformationCard />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={4}>
-                    <InformationCard />
-                  </Grid>
-                </Grid>
-              )}
+                )}
+              </div>
             </div>
           </Paper>
         </Grid>

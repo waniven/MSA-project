@@ -2,6 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
@@ -17,6 +18,10 @@ interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
 
+interface InformationCardProps {
+  showImage?: boolean;
+}
+
 const ExpandMore = styled((props: ExpandMoreProps) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -28,7 +33,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-const InformationCard: React.FC = () => {
+const InformationCard: React.FC<InformationCardProps> = ({ showImage = true }) => {
   const [expanded, setExpanded] = React.useState(false);
   const theme = useTheme();
   const buttonColor = theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main;
@@ -56,13 +61,21 @@ const InformationCard: React.FC = () => {
         title={<Typography variant="h6" color={theme.palette.text.primary}>Interesting Fact</Typography>}
         subheader={<Typography variant="body2" color={theme.palette.text.primary}>June 25, 2024</Typography>}
       />
+      {showImage && (
+        <CardMedia
+          component="img"
+          height="194"
+          image="https://via.placeholder.com/345x194"
+          alt="Placeholder image"
+        />
+      )}
       <CardContent>
         <Typography variant="body2" color={theme.palette.text.primary}>
           Did you know? Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still perfectly edible.
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Button variant="contained" sx={{backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root.backgroundColor}}>
+        <Button variant="contained" sx={{ backgroundColor: buttonColor, color: theme.palette.getContrastText(buttonColor) }}>
           Join
         </Button>
         <ExpandMore
