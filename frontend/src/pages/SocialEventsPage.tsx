@@ -24,7 +24,7 @@ const SocialEventsPage = () => {
   return (
     <StyledPaper elevation={8}>
     <div>
-      {<h1>Socialevents Page</h1>/* Other components */}
+      {<h1>Social events page</h1>/* Other components */}
       <FloatingButton>
         <AddIcon />
       </FloatingButton>
