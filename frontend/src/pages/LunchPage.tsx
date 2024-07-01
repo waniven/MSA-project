@@ -20,6 +20,31 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   },
 }));
 
+const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  '& .MuiFormControl-root, & .MuiInputLabel-root, & .MuiInputBase-root, & .MuiButton-root': {
+    color: theme.palette.text.primary,
+    borderColor: theme.palette.text.primary,
+  },
+  '& .MuiInputBase-input': {
+    color: theme.palette.text.primary,
+  },
+  '& .MuiFormHelperText-root': {
+    color: theme.palette.text.primary,
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+  },
+}));
+
 const LunchPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -99,8 +124,8 @@ const LunchPage: React.FC = () => {
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Add New Item</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>Add New Item</DialogTitle>
+        <DialogContentStyled>
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 1 }} error={validation.category}>
             <InputLabel required>Category</InputLabel>
             <Select
@@ -108,6 +133,7 @@ const LunchPage: React.FC = () => {
               onChange={(e) => setCategory(e.target.value)}
               label="Category"
               required
+              sx={{ color: theme.palette.text.primary }}
             >
               <MenuItem value="Food">Food</MenuItem>
               <MenuItem value="Coffee">Coffee</MenuItem>
@@ -120,10 +146,13 @@ const LunchPage: React.FC = () => {
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            sx={{ marginBottom: 1 }}
+            sx={{ marginBottom: 1, color: theme.palette.text.primary }}
             required
             error={validation.name}
             helperText={validation.name ? 'Please enter a name' : ''}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
           />
           <TextField
             fullWidth
@@ -133,13 +162,14 @@ const LunchPage: React.FC = () => {
             value={time}
             InputLabelProps={{
               shrink: true,
+              style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setTime(e.target.value)}
-            sx={{ marginBottom: 1 }}
+            sx={{ marginBottom: 1, color: theme.palette.text.primary }}
             required
             error={validation.time}
             helperText={validation.time ? 'Please enter a time' : ''}
-            inputProps={{ step: 300 }} // 5 min
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
           />
           <TextField
             fullWidth
@@ -149,13 +179,16 @@ const LunchPage: React.FC = () => {
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            sx={{ marginBottom: 1 }}
+            sx={{ marginBottom: 1, color: theme.palette.text.primary }}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
           />
           <Button
             variant="contained"
             component="label"
             fullWidth
-            sx={{ marginTop: 1, marginBottom: 1 }}
+            sx={{ marginTop: 1, marginBottom: 1, backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: '#ffffff !important' }}
           >
             Upload Image
             <input
@@ -164,9 +197,9 @@ const LunchPage: React.FC = () => {
               onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
             />
           </Button>
-        </DialogContent>
+        </DialogContentStyled>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
           <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>Add</Button>
         </DialogActions>
       </Dialog>
