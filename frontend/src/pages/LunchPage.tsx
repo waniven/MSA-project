@@ -124,7 +124,7 @@ const LunchPage: React.FC = () => {
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: theme.palette.text.primary }}>Add New Item</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>Create New Lunch Plan</DialogTitle>
         <DialogContentStyled>
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 1 }} error={validation.category}>
             <InputLabel required>Category</InputLabel>
