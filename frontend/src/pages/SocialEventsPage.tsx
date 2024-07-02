@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Fab, Grid, Box, Typography, Container } from '@mui/material';
+import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, FormHelperText } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
 import StyledPaper from '../StyledPaper';
 import EventCard from '../EventCard'; // Ensure the path is correct
-import { BorderAll, BorderAllOutlined, WidthFull } from '@mui/icons-material';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
@@ -21,9 +20,43 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   },
 }));
 
+const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(2),
+  color: theme.palette.text.primary,
+  '& .MuiFormControl-root, & .MuiInputLabel-root, & .MuiInputBase-root, & .MuiButton-root': {
+    color: theme.palette.text.primary,
+    borderColor: theme.palette.text.primary,
+  },
+  '& .MuiInputBase-input': {
+    color: theme.palette.text.primary,
+  },
+  '& .MuiFormHelperText-root': {
+    color: theme.palette.text.primary,
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+    '&:hover fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
+    },
+  },
+}));
+
 const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [time, setTime] = useState('00:00');  // Set default value to "00:00"
+  const [location, setLocation] = useState('');
+  const [details, setDetails] = useState('');
+  const [image, setImage] = useState<File | null>(null);
+  const [validation, setValidation] = useState({ name: false, time: false, location: false });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,6 +64,22 @@ const SocialEventsPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setValidation({ name: false, time: false, location: false });
+  };
+
+  const handleSubmit = () => {
+    const isValid = name && time && location;
+    setValidation({
+      name: !name,
+      time: !time,
+      location: !location,
+    });
+
+    if (isValid) {
+      // Handle the form submission logic here
+      console.log({ name, time, location, image, details });
+      handleClose();
+    }
   };
 
   // Sample event data
@@ -38,8 +87,9 @@ const SocialEventsPage: React.FC = () => {
     {
       image: 'https://via.placeholder.com/250',
       name: 'Event 1',
+      location: 'Aut South',
       time: '12:00 PM',
-      location: 'Location 1',
+      date: '15 july',
       details: 'Details about Event 1',
       attendees: 5,
     },
@@ -47,6 +97,7 @@ const SocialEventsPage: React.FC = () => {
       image: 'https://via.placeholder.com/250',
       name: 'Event 2',
       time: '2:00 PM',
+      date: '15 july',
       location: 'Location 2',
       details: 'Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2',
       attendees: 10,
@@ -56,9 +107,9 @@ const SocialEventsPage: React.FC = () => {
   return (
     <StyledPaper elevation={8} sx={{ padding: 2 }}>
       <Box sx={{ textAlign: 'center', padding: 2 }}>
-        <Typography variant="h4">Social Events</Typography>
-        <Container maxWidth="md" sx={{ padding: 4}}>
-          <Grid container spacing={4} direction="column" justifyContent="center" >
+        <Typography variant="h4" sx={{ marginBottom: 4 }}>Social Events</Typography>
+        <Container maxWidth="md" sx={{ padding: 4 }}>
+          <Grid container spacing={4} direction="column" justifyContent="center">
             {events.map((event, index) => (
               <Grid item key={index}>
                 <EventCard {...event} />
@@ -70,6 +121,80 @@ const SocialEventsPage: React.FC = () => {
       <FloatingButton onClick={handleClickOpen}>
         <AddIcon />
       </FloatingButton>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>Add New Event</DialogTitle>
+        <DialogContentStyled>
+          <Box sx={{ marginTop: 2 }}>
+            <TextField
+              fullWidth
+              label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              error={validation.name}
+              helperText={validation.name ? 'Please enter a name' : ''}
+              InputProps={{
+                style: { color: theme.palette.text.primary }
+              }}
+            />
+          </Box>
+          <TextField
+            fullWidth
+            label="Time"
+            type="time"
+            value={time}
+            InputLabelProps={{
+              shrink: true,
+              style: { color: theme.palette.text.primary }
+            }}
+            onChange={(e) => setTime(e.target.value)}
+            required
+            error={validation.time}
+            helperText={validation.time ? 'Please enter a time' : ''}
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
+          />
+          <TextField
+            fullWidth
+            label="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+            error={validation.location}
+            helperText={validation.location ? 'Please enter a location' : ''}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Details"
+            multiline
+            rows={4}
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
+          />
+          <Button
+            variant="contained"
+            component="label"
+            fullWidth
+            sx={{ marginTop: 1, backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: '#ffffff !important' }}
+          >
+            Upload Image
+            <input
+              type="file"
+              hidden
+              onChange={(e) => setImage(e.target.files ? e.target.files[0] : null)}
+            />
+          </Button>
+        </DialogContentStyled>
+        <DialogActions>
+          <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>Add</Button>
+        </DialogActions>
+      </Dialog>
     </StyledPaper>
   );
 };

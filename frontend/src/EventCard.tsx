@@ -5,13 +5,14 @@ import { useTheme } from '@mui/material/styles';
 interface EventCardProps {
   image: string;
   name: string;
+  date: string;  // Added date prop
   time: string;
   location: string;
   details: string;
   attendees: number;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ image, name, time, location, details, attendees }) => {
+const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location, details, attendees }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const [expanded, setExpanded] = useState(false);
@@ -42,7 +43,7 @@ const EventCard: React.FC<EventCardProps> = ({ image, name, time, location, deta
             {name}
           </Typography>
           <Typography variant="h6" color="text.primary" component="div">
-            {time}
+            {date} - {time}
           </Typography>
           <Typography variant="h6" color="text.primary" component="div">
             {location}
