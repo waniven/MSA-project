@@ -50,7 +50,7 @@ const LunchPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
-  const [time, setTime] = useState('00:00');  // Set default value to "00:00"
+  const [time, setTime] = useState('');  // Set default value to empty string
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [validation, setValidation] = useState({ category: false, name: false, time: false });
@@ -159,6 +159,7 @@ const LunchPage: React.FC = () => {
             margin="dense"
             label="Time"
             type="time"
+            placeholder="--:-- --"
             value={time}
             InputLabelProps={{
               shrink: true,

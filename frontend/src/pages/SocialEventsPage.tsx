@@ -52,11 +52,12 @@ const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
-  const [time, setTime] = useState('00:00');  // Set default value to "00:00"
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');  // Set default value to empty string
   const [location, setLocation] = useState('');
   const [details, setDetails] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [validation, setValidation] = useState({ name: false, time: false, location: false });
+  const [validation, setValidation] = useState({ name: false, date: false, time: false, location: false });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -64,20 +65,21 @@ const SocialEventsPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setValidation({ name: false, time: false, location: false });
+    setValidation({ name: false, date: false, time: false, location: false });
   };
 
   const handleSubmit = () => {
-    const isValid = name && time && location;
+    const isValid = name && date && time && location;
     setValidation({
       name: !name,
+      date: !date,
       time: !time,
       location: !location,
     });
 
     if (isValid) {
       // Handle the form submission logic here
-      console.log({ name, time, location, image, details });
+      console.log({ name, date, time, location, image, details });
       handleClose();
     }
   };
@@ -89,7 +91,7 @@ const SocialEventsPage: React.FC = () => {
       name: 'Event 1',
       location: 'Aut South',
       time: '12:00 PM',
-      date: '15 july',
+      date: '15 July',
       details: 'Details about Event 1',
       attendees: 5,
     },
@@ -97,7 +99,7 @@ const SocialEventsPage: React.FC = () => {
       image: 'https://via.placeholder.com/250',
       name: 'Event 2',
       time: '2:00 PM',
-      date: '15 july',
+      date: '15 July',
       location: 'Location 2',
       details: 'Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2',
       attendees: 10,
@@ -138,6 +140,21 @@ const SocialEventsPage: React.FC = () => {
               }}
             />
           </Box>
+          <TextField
+            fullWidth
+            label="Date"
+            type="date"
+            value={date}
+            InputLabelProps={{
+              shrink: true,
+              style: { color: theme.palette.text.primary }
+            }}
+            onChange={(e) => setDate(e.target.value)}
+            required
+            error={validation.date}
+            helperText={validation.date ? 'Please enter a date' : ''}
+            inputProps={{ style: { color: theme.palette.text.primary } }}
+          />
           <TextField
             fullWidth
             label="Time"
