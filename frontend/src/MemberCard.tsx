@@ -25,7 +25,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ image, name, role, office, emai
   }, [about]);
 
   return (
-    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.paper }}>
+    <Card elevation={6} sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.paper }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: isSmallScreen ? '100%' : 250 }}>
         <CardMedia
           component="img"

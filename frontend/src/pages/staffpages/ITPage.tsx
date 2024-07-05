@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Paper, Typography } from '@mui/material';
 import MemberCard from '../../MemberCard';
 
 
@@ -19,9 +19,11 @@ const members = [
 const ITPage: React.FC = () => {
   return (
     <Container sx={{ marginTop: 4 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        IT Department
-      </Typography>
+          <Paper elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
+            <Typography variant="h4" align="center">
+              IT Department
+            </Typography>
+          </Paper>
       <Grid container spacing={4}>
         {members.map((member) => (
           <Grid item xs={12} key={member.name}>
