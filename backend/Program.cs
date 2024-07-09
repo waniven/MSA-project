@@ -5,8 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Sets development environment to use in-memory database
-if (builder.Environment.IsDevelopment())
-{
+if (builder.Environment.IsDevelopment()){
     builder.Services.AddDbContext<LunchContext>(options =>
         options.UseInMemoryDatabase("Lunch"));
 
@@ -15,9 +14,7 @@ if (builder.Environment.IsDevelopment())
 
     builder.Services.AddDbContext<StaffContext>(options =>
         options.UseInMemoryDatabase("Staff"));
-}
-else
-{
+}else{
     builder.Services.AddDbContext<LunchContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("LunchContext") ?? throw new InvalidOperationException("Connection string 'LunchContext' not found.")));
 
@@ -40,8 +37,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()){
     app.UseSwagger();
     app.UseSwaggerUI();
 }

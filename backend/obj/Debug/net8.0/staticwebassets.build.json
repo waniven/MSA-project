@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "k3IJvhADeM12pklua7RnvX0PfH6+YsgVJslERy+Qoiw=",
+  "Hash": "5kbGNL7u3yYzbtlJdlYxQ1Ka61Ua3jNfUh7a1EdRr1Q=",
   "Source": "backend",
   "BasePath": "_content/backend",
   "Mode": "Default",
@@ -10,7 +10,7 @@
     {
       "Name": "backend/wwwroot",
       "Source": "backend",
-      "ContentRoot": "/Users/williamniven/Desktop/MSA/backend/wwwroot/",
+      "ContentRoot": "/Users/williamniven/Desktop/MSA-project/backend/wwwroot/",
       "BasePath": "_content/backend",
       "Pattern": "**"
     }
