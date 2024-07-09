@@ -3202,11 +3202,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/williamniven/Desktop/MSA/backend/backend.csproj",
+      "projectUniqueName": "/Users/williamniven/Desktop/MSA-project/backend/backend.csproj",
       "projectName": "backend",
-      "projectPath": "/Users/williamniven/Desktop/MSA/backend/backend.csproj",
+      "projectPath": "/Users/williamniven/Desktop/MSA-project/backend/backend.csproj",
       "packagesPath": "/Users/williamniven/.nuget/packages/",
-      "outputPath": "/Users/williamniven/Desktop/MSA/backend/obj/",
+      "outputPath": "/Users/williamniven/Desktop/MSA-project/backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/williamniven/.nuget/NuGet/NuGet.Config"
