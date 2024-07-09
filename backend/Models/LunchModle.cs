@@ -5,6 +5,5 @@ namespace Models{
         public String Category { get; set; }
         public String Time { get; set; }
         public String? Description { get; set; }
-        public IFormFile Image { get; set; }
     }
 }

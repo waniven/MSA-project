@@ -10,6 +10,5 @@ namespace Models{
         public String Email { get; set; }
         public String PhoneExtention { get; set; }
         public String PhoneNumber { get; set; }
-        public IFormFile? Image { get; set; }
     }
 }

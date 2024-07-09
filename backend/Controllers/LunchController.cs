@@ -27,7 +27,7 @@ namespace backend.Controllers{
             }
         }
 
-        [HttpPost]
+    [HttpPost]
         public async Task<ActionResult<Lunch>> AddLunch(Lunch lunch){
             await _lunchRepository.AddLunchAsync(lunch);
             return CreatedAtAction(nameof(GetLunchById), new { id = lunch.ID }, lunch);

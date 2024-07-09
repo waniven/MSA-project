@@ -6,6 +6,5 @@ namespace Models{
         public String Time { get; set; }
         public String Location { get; set; }
         public String? Description { get; set; }
-        public IFormFile Image { get; set; }
     }
 }
