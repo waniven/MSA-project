@@ -1,113 +1,110 @@
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repositories;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
-namespace backend.Controllers
-{
+namespace backend.Controllers{
     [ApiController]
     [Route("api/[controller]")]
-    public class LunchController : ControllerBase
-    {
+    public class LunchController : ControllerBase{
         private readonly ILunchRepository _lunchRepository;
 
-        public LunchController(ILunchRepository lunchRepository)
-        {
+        public LunchController(ILunchRepository lunchRepository){
             _lunchRepository = lunchRepository;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Lunch>> GetLunches()
-        {
-            return await _lunchRepository.GetLunchesAsync();
+        public async Task<IEnumerable<Lunch>> GetLunches(){
+            var lunches = await _lunchRepository.GetLunchesAsync();
+
+            foreach (var lunch in lunches){
+                var filePath = Path.Combine("Uploads", $"{lunch.ID}.jpg");
+                if (System.IO.File.Exists(filePath)){
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                    lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{lunch.ID}";
+                }
+            }
+
+            return lunches;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Lunch>> GetLunchById(long id)
-        {
+        public async Task<ActionResult<Lunch>> GetLunchById(long id){
             var lunch = await _lunchRepository.GetLunchByIdAsync(id);
-            if (lunch == null)
-            {
+            if (lunch == null){
                 return NotFound();
             }
-            else
-            {
-                return lunch;
+
+            var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
+            if (System.IO.File.Exists(filePath)){
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{id}";
             }
+
+            return lunch;
         }
 
         [HttpGet("image/{id}")]
-        public async Task<IActionResult> GetImage(long id)
-        {
-            var lunch = await _lunchRepository.GetLunchByIdAsync(id);
-            if (lunch == null || string.IsNullOrEmpty(lunch.ImageFilePath))
-            {
+        public async Task<IActionResult> GetImage(long id){
+            var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
+            if (!System.IO.File.Exists(filePath)){
                 return NotFound();
             }
 
-            var image = System.IO.File.OpenRead(lunch.ImageFilePath);
+            var image = System.IO.File.OpenRead(filePath);
             return File(image, "image/jpeg");
         }
 
         [HttpPost]
-        public async Task<ActionResult<Lunch>> AddLunch([FromForm] Lunch lunch)
-        {
-            if (lunch.Image != null && lunch.Image.Length > 0)
-            {
-                var filePath = Path.Combine("Uploads", lunch.Image.FileName);
+        public async Task<ActionResult<Lunch>> AddLunch([FromForm] Lunch lunch){
+            await _lunchRepository.AddLunchAsync(lunch);
+            
+            if (lunch.Image != null && lunch.Image.Length > 0){
+                var filePath = Path.Combine("Uploads/Lunch", $"{lunch.ID}.jpg");
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
+                using (var stream = new FileStream(filePath, FileMode.Create)){
                     await lunch.Image.CopyToAsync(stream);
                 }
 
-                lunch.ImageFilePath = filePath; // Save the file path
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{lunch.ID}"; // Set the image URL internally
             }
 
-            await _lunchRepository.AddLunchAsync(lunch);
             return CreatedAtAction(nameof(GetLunchById), new { id = lunch.ID }, lunch);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateLunch(long id, [FromForm] Lunch lunch)
-        {
-            if (id != lunch.ID)
-            {
+        public async Task<IActionResult> UpdateLunch(long id, [FromForm] Lunch lunch){
+            if (id != lunch.ID){
                 return BadRequest();
             }
 
-            if (lunch.Image != null && lunch.Image.Length > 0)
-            {
-                var filePath = Path.Combine("Uploads", lunch.Image.FileName);
+            await _lunchRepository.UpdateLunchAsync(lunch);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
+            if (lunch.Image != null && lunch.Image.Length > 0){
+                var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
+
+                using (var stream = new FileStream(filePath, FileMode.Create)){
                     await lunch.Image.CopyToAsync(stream);
                 }
 
-                lunch.ImageFilePath = filePath; // Save the file path
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{id}"; // Set the image URL internally
             }
 
-            await _lunchRepository.UpdateLunchAsync(lunch);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLunch(long id)
-        {
+        public async Task<IActionResult> DeleteLunch(long id){
             var lunch = await _lunchRepository.GetLunchByIdAsync(id);
-            if (lunch == null)
-            {
+            if (lunch == null){
                 return NotFound();
             }
 
             // Delete the associated image file if it exists
-            if (!string.IsNullOrEmpty(lunch.ImageFilePath) && System.IO.File.Exists(lunch.ImageFilePath))
-            {
-                System.IO.File.Delete(lunch.ImageFilePath);
+            var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
+            if (System.IO.File.Exists(filePath)){
+                System.IO.File.Delete(filePath);
             }
 
             await _lunchRepository.DeleteLunchAsync(id);

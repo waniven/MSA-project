@@ -14,7 +14,17 @@ namespace backend.Controllers{
 
         [HttpGet]
         public async Task<IEnumerable<Staff>> GetAllStaff(){
-            return await _staffRepository.GetAllStaffAsync();
+            var staffList = await _staffRepository.GetAllStaffAsync();
+
+            foreach (var staff in staffList){
+                var filePath = Path.Combine("Uploads/Staff", $"{staff.ID}.jpg");
+                if (System.IO.File.Exists(filePath)){
+                    var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                    staff.ImageUrl = $"{baseUrl}/api/staff/image/{staff.ID}";
+                }
+            }
+
+            return staffList;
         }
 
         [HttpGet("{id}")]
@@ -22,25 +32,66 @@ namespace backend.Controllers{
             var staff = await _staffRepository.GetStaffByIdAsync(id);
             if (staff == null){
                 return NotFound();
-            }else{
-                return staff;
             }
+
+            var filePath = Path.Combine("Uploads/Staff", $"{id}.jpg");
+            if (System.IO.File.Exists(filePath)){
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                staff.ImageUrl = $"{baseUrl}/api/staff/image/{id}";
+            }
+
+            return staff;
+        }
+
+        [HttpGet("image/{id}")]
+        public async Task<IActionResult> GetImage(long id){
+            var filePath = Path.Combine("Uploads/Staff", $"{id}.jpg");
+            if (!System.IO.File.Exists(filePath)){
+                return NotFound();
+            }
+
+            var image = System.IO.File.OpenRead(filePath);
+            return File(image, "image/jpeg");
         }
 
         [HttpPost]
-        public async Task<ActionResult<Staff>> AddStaff(Staff staff){
+        public async Task<ActionResult<Staff>> AddStaff([FromForm] Staff staff){
             await _staffRepository.AddStaffAsync(staff);
+
+            if (staff.Image != null && staff.Image.Length > 0){
+                var filePath = Path.Combine("Uploads/Staff", $"{staff.ID}.jpg");
+
+                using (var stream = new FileStream(filePath, FileMode.Create)){
+                    await staff.Image.CopyToAsync(stream);
+                }
+
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                staff.ImageUrl = $"{baseUrl}/api/staff/image/{staff.ID}"; // Set the image URL internally
+            }
+
             return CreatedAtAction(nameof(GetStaffById), new { id = staff.ID }, staff);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStaff(long id, Staff staff){
+        public async Task<IActionResult> UpdateStaff(long id, [FromForm] Staff staff){
             if (id != staff.ID){
                 return BadRequest();
-            }else{
-                await _staffRepository.UpdateStaffAsync(staff);
-                return NoContent();
             }
+
+            await _staffRepository.UpdateStaffAsync(staff);
+
+            if (staff.Image != null && staff.Image.Length > 0){
+                var filePath = Path.Combine("Uploads/Staff", $"{id}.jpg");
+
+                using (var stream = new FileStream(filePath, FileMode.Create)){
+                    await staff.Image.CopyToAsync(stream);
+                }
+
+                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+                staff.ImageUrl = $"{baseUrl}/api/staff/image/{id}"; // Set the image URL internally
+            }
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -48,10 +99,16 @@ namespace backend.Controllers{
             var staff = await _staffRepository.GetStaffByIdAsync(id);
             if (staff == null){
                 return NotFound();
-            }else{
-                await _staffRepository.DeleteStaffAsync(id);
-                return NoContent();
             }
+
+            // Delete the associated image file if it exists
+            var filePath = Path.Combine("Uploads/Staff", $"{id}.jpg");
+            if (System.IO.File.Exists(filePath)){
+                System.IO.File.Delete(filePath);
+            }
+
+            await _staffRepository.DeleteStaffAsync(id);
+            return NoContent();
         }
     }
 }
