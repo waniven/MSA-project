@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Repositories;
 
+
 namespace backend.Controllers{
     [ApiController]
     [Route("api/[controller]")]
@@ -15,13 +16,8 @@ namespace backend.Controllers{
         [HttpGet]
         public async Task<IEnumerable<Lunch>> GetLunches(){
             var lunches = await _lunchRepository.GetLunchesAsync();
-
             foreach (var lunch in lunches){
-                var filePath = Path.Combine("Uploads", $"{lunch.ID}.jpg");
-                if (System.IO.File.Exists(filePath)){
-                    var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-                    lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{lunch.ID}";
-                }
+                SetImageUrl(lunch);
             }
 
             return lunches;
@@ -34,11 +30,7 @@ namespace backend.Controllers{
                 return NotFound();
             }
 
-            var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
-            if (System.IO.File.Exists(filePath)){
-                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{id}";
-            }
+            SetImageUrl(lunch);
 
             return lunch;
         }
@@ -57,7 +49,7 @@ namespace backend.Controllers{
         [HttpPost]
         public async Task<ActionResult<Lunch>> AddLunch([FromForm] Lunch lunch){
             await _lunchRepository.AddLunchAsync(lunch);
-            
+
             if (lunch.Image != null && lunch.Image.Length > 0){
                 var filePath = Path.Combine("Uploads/Lunch", $"{lunch.ID}.jpg");
 
@@ -65,8 +57,7 @@ namespace backend.Controllers{
                     await lunch.Image.CopyToAsync(stream);
                 }
 
-                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{lunch.ID}"; // Set the image URL internally
+                SetImageUrl(lunch);
             }
 
             return CreatedAtAction(nameof(GetLunchById), new { id = lunch.ID }, lunch);
@@ -78,8 +69,6 @@ namespace backend.Controllers{
                 return BadRequest();
             }
 
-            await _lunchRepository.UpdateLunchAsync(lunch);
-
             if (lunch.Image != null && lunch.Image.Length > 0){
                 var filePath = Path.Combine("Uploads/Lunch", $"{id}.jpg");
 
@@ -87,10 +76,10 @@ namespace backend.Controllers{
                     await lunch.Image.CopyToAsync(stream);
                 }
 
-                var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-                lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{id}"; // Set the image URL internally
+                SetImageUrl(lunch);
             }
 
+            await _lunchRepository.UpdateLunchAsync(lunch);
             return NoContent();
         }
 
@@ -109,6 +98,11 @@ namespace backend.Controllers{
 
             await _lunchRepository.DeleteLunchAsync(id);
             return NoContent();
+        }
+
+        private void SetImageUrl(Lunch lunch){
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+            lunch.ImageUrl = $"{baseUrl}/api/lunch/image/{lunch.ID}";
         }
     }
 }
