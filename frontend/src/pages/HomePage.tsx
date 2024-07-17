@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Paper, List, ListItem, useMediaQuery, useTheme } from '@mui/material';
 import EventTimeline from '../EventTimeline'; // Ensure the path is correct
 import InformationCard from '../InformationCard'; // Ensure the path is correct
+import axios from 'axios';
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
   const isSmallCard = useMediaQuery('(max-width:250px)');
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5022/api/Lunch');
+        setData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div style={{ padding: theme.spacing(2), textAlign: 'center', color: theme.palette.text.secondary }}>
@@ -32,33 +60,33 @@ const HomePage: React.FC = () => {
               <div className="information-card-container">
                 {isSmallCard ? (
                   <List>
-                    <ListItem>
-                      <InformationCard showImage={false} />
-                    </ListItem>
-                    <ListItem>
-                      <InformationCard showImage={false} />
-                    </ListItem>
-                    <ListItem>
-                      <InformationCard showImage={false} />
-                    </ListItem>
-                    <ListItem>
-                      <InformationCard showImage={false} />
-                    </ListItem>
+                    {data.map((item: any) => (
+                      <ListItem key={item.id}>
+                        <InformationCard
+                          showImage={false}
+                          poster={item.poster}
+                          category={item.category}
+                          time={item.time}
+                          description={item.description}
+                          imageUrl={item.imageUrl}
+                        />
+                      </ListItem>
+                    ))}
                   </List>
                 ) : (
                   <Grid container spacing={2} justifyContent="center">
-                    <Grid item>
-                      <InformationCard showImage={false} />
-                    </Grid>
-                    <Grid item>
-                      <InformationCard showImage={false} />
-                    </Grid>
-                    <Grid item>
-                      <InformationCard showImage={false} />
-                    </Grid>
-                    <Grid item>
-                      <InformationCard showImage={false} />
-                    </Grid>
+                    {data.map((item: any) => (
+                      <Grid item key={item.id}>
+                        <InformationCard
+                          showImage={false}
+                          poster={item.poster}
+                          category={item.category}
+                          time={item.time}
+                          description={item.description}
+                          imageUrl={item.imageUrl}
+                        />
+                      </Grid>
+                    ))}
                   </Grid>
                 )}
               </div>
