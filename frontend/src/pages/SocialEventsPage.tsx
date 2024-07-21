@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, FormHelperText } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
 import StyledPaper from '../StyledPaper';
 import EventCard from '../EventCard'; // Ensure the path is correct
+import axios from 'axios';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
@@ -58,6 +59,25 @@ const SocialEventsPage: React.FC = () => {
   const [details, setDetails] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [validation, setValidation] = useState({ name: false, date: false, time: false, location: false });
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5022/api/SocialEvents');
+        setEvents(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,27 +104,13 @@ const SocialEventsPage: React.FC = () => {
     }
   };
 
-  // Sample event data
-  const events = [
-    {
-      image: 'https://via.placeholder.com/250',
-      name: 'Event 1',
-      location: 'Aut South',
-      time: '12:00 PM',
-      date: '15 July',
-      details: 'Details about Event 1',
-      attendees: 5,
-    },
-    {
-      image: 'https://via.placeholder.com/250',
-      name: 'Event 2',
-      time: '2:00 PM',
-      date: '15 July',
-      location: 'Location 2',
-      details: 'Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2Details about Event 2',
-      attendees: 10,
-    },
-  ];
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <StyledPaper elevation={8} sx={{ padding: 2 }}>
@@ -112,9 +118,16 @@ const SocialEventsPage: React.FC = () => {
         <Typography variant="h4" sx={{ marginBottom: 4 }}>Social Events</Typography>
         <Container maxWidth="md" sx={{ padding: 4 }}>
           <Grid container spacing={4} direction="column" justifyContent="center">
-            {events.map((event, index) => (
-              <Grid item key={index}>
-                <EventCard {...event} />
+            {events.map((event: any) => (
+              <Grid item key={event.id}>
+                <EventCard
+                  poster={event.poster}
+                  date={event.date}
+                  time={event.time}
+                  location={event.location}
+                  description={event.description}
+                  imageUrl={event.imageUrl}
+                />
               </Grid>
             ))}
           </Grid>

@@ -3,16 +3,15 @@ import { Card, CardContent, CardMedia, Typography, Button, Box, useMediaQuery } 
 import { useTheme } from '@mui/material/styles';
 
 interface EventCardProps {
-  image: string;
-  name: string;
-  date: string;  // Added date prop
+  poster: string;
+  date: string;
   time: string;
   location: string;
-  details: string;
-  attendees: number;
+  description: string;
+  imageUrl: string | null;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location, details, attendees }) => {
+const EventCard: React.FC<EventCardProps> = ({ poster, date, time, location, description, imageUrl }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const [expanded, setExpanded] = useState(false);
@@ -23,7 +22,7 @@ const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location
     if (textRef.current) {
       setShowReadMore(textRef.current.scrollHeight > 60); // Adjust to make the text limit shorter
     }
-  }, [details]);
+  }, [description]);
 
   const handleReadMore = () => {
     setExpanded(!expanded);
@@ -34,13 +33,13 @@ const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location
       <CardMedia
         component="img"
         sx={{ width: isSmallScreen ? '100%' : 250, height: 250 }}
-        image={image}
-        alt={name}
+        image={imageUrl || 'https://via.placeholder.com/250'}
+        alt={poster}
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, maxHeight: expanded ? 'none' : 250, overflow: 'hidden' }}>
         <CardContent sx={{ flex: '1 0 auto', position: 'relative' }}>
           <Typography component="div" variant="h4" color={theme.palette.text.primary}>
-            {name}
+            {poster}
           </Typography>
           <Typography variant="h6" color="text.primary" component="div">
             {date} - {time}
@@ -63,7 +62,7 @@ const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location
               mb: 2 // Add margin to ensure proper spacing
             }}
           >
-            {details}
+            {description}
           </Typography>
         </CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pl: 2, pr: 2, pb: 2 }}>
@@ -71,9 +70,6 @@ const EventCard: React.FC<EventCardProps> = ({ image, name, date, time, location
             <Button variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.hoverColor) }}>
               Attend
             </Button>
-            <Typography variant="subtitle1" color="text.primary" component="div" sx={{ ml: 2 }}>
-              {attendees} attending
-            </Typography>
           </Box>
           {showReadMore && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

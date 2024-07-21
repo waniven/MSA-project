@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Select, MenuItem, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
 import StyledPaper from '../StyledPaper';
-import InformationCard from '../InformationCard'; // Ensure the path is correct
+import InformationCard from '../InformationCard';
+import axios from 'axios';
 
 const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
@@ -45,15 +46,62 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
   },
 }));
 
+interface Data {
+  id: number;
+  poster: string;
+  category: string;
+  time: string;
+  description: string;
+  imageUrl: string | null;
+}
+
 const LunchPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
-  const [time, setTime] = useState('');  // Set default value to empty string
+  const [time, setTime] = useState(''); // Set default value to empty string
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [validation, setValidation] = useState({ category: false, name: false, time: false });
+  const [foodItems, setFoodItems] = useState<Data[]>([]);
+  const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const source = axios.CancelToken.source();
+        const timeout = setTimeout(() => {
+          source.cancel();
+        }, 10000); // 10 seconds timeout
+
+        const response = await axios.get<Data[]>('http://localhost:5022/api/Lunch', {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeout);
+
+        console.log('API Response:', response.data); // Log the API response
+        const food = response.data.filter(item => item.category === 'Food');
+        const coffee = response.data.filter(item => item.category === 'Coffee');
+        setFoodItems(food);
+        setCoffeeItems(coffee);
+        setLoading(false);
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.error('Request canceled due to timeout');
+          setError('Request timed out');
+        } else {
+          console.error('Error fetching data:', error); // Log the error
+          setError('Error fetching data');
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -79,6 +127,14 @@ const LunchPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <StyledPaper elevation={8} sx={{ padding: 2 }}>
       <Box sx={{ textAlign: 'center', padding: 2 }}>
@@ -90,15 +146,18 @@ const LunchPage: React.FC = () => {
                 <Typography variant="h5">Food</Typography>
               </Box>
               <Grid container spacing={2} justifyContent="center">
-                <Grid item>
-                  <InformationCard />
-                </Grid>
-                <Grid item>
-                  <InformationCard />
-                </Grid>
-                <Grid item>
-                  <InformationCard />
-                </Grid>
+                {foodItems.map((item) => (
+                  <Grid item key={item.id}>
+                    <InformationCard
+                      poster={item.poster}
+                      category={item.category}
+                      time={item.time}
+                      description={item.description}
+                      imageUrl={item.imageUrl}
+                      showImage={!!item.imageUrl} // Only show image if imageUrl is not null
+                    />
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
             <Grid item xs={12} md={6}>
@@ -106,15 +165,18 @@ const LunchPage: React.FC = () => {
                 <Typography variant="h5">Coffee</Typography>
               </Box>
               <Grid container spacing={2} justifyContent="center">
-                <Grid item>
-                  <InformationCard />
-                </Grid>
-                <Grid item>
-                  <InformationCard />
-                </Grid>
-                <Grid item>
-                  <InformationCard />
-                </Grid>
+                {coffeeItems.map((item) => (
+                  <Grid item key={item.id}>
+                    <InformationCard
+                      poster={item.poster}
+                      category={item.category}
+                      time={item.time}
+                      description={item.description}
+                      imageUrl={item.imageUrl}
+                      showImage={!!item.imageUrl} // Only show image if imageUrl is not null
+                    />
+                  </Grid>
+                ))}
               </Grid>
             </Grid>
           </Grid>
