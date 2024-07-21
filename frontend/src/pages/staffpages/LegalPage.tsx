@@ -12,7 +12,8 @@ const LegalPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5022/api/Staff');
-        setMembers(response.data);
+        const legalMembers = response.data.filter((member: any) => member.department === 'Legal');
+        setMembers(legalMembers);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);

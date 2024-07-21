@@ -12,7 +12,8 @@ const MarketingPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5022/api/Staff');
-        setMembers(response.data);
+        const marketingMembers = response.data.filter((member: any) => member.department === 'Marketing');
+        setMembers(marketingMembers);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);

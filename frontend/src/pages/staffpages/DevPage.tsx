@@ -12,7 +12,8 @@ const DevPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5022/api/Staff');
-        setMembers(response.data);
+        const devMembers = response.data.filter((member: any) => member.department === 'Dev');
+        setMembers(devMembers);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -48,7 +49,7 @@ const DevPage: React.FC = () => {
               role={member.role}
               office={member.office}
               email={member.email}
-              phoneExtension={member.phoneExtention} // Corrected to match API response
+              phoneExtension={member.phoneExtension}
               phoneNumber={member.phoneNumber}
               about={member.about}
             />

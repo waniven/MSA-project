@@ -12,7 +12,8 @@ const HRPage: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:5022/api/Staff');
-        setMembers(response.data);
+        const hrMembers = response.data.filter((member: any) => member.department === 'HR');
+        setMembers(hrMembers);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
