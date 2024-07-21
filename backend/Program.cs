@@ -1,32 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using Repositories;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file
+Env.Load();
+
+// Get connection strings from environment variables
+var lunchDbConnectionString = Environment.GetEnvironmentVariable("LUNCH_DB_CONNECTION_STRING");
+var socialEventsDbConnectionString = Environment.GetEnvironmentVariable("SOCIALEVENTS_DB_CONNECTION_STRING");
+var staffDbConnectionString = Environment.GetEnvironmentVariable("STAFF_DB_CONNECTION_STRING");
+
 // Add services to the container.
-// Sets development environment to use in-memory database
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDbContext<LunchContext>(options =>
-        options.UseInMemoryDatabase("Lunch"));
+builder.Services.AddDbContext<LunchContext>(options =>
+    options.UseSqlServer(lunchDbConnectionString ?? throw new InvalidOperationException("Connection string 'LunchContext' not found.")));
 
-    builder.Services.AddDbContext<SocialEventsContext>(options =>
-        options.UseInMemoryDatabase("SocialEvents"));
+builder.Services.AddDbContext<SocialEventsContext>(options =>
+    options.UseSqlServer(socialEventsDbConnectionString ?? throw new InvalidOperationException("Connection string 'SocialEventsContext' not found.")));
 
-    builder.Services.AddDbContext<StaffContext>(options =>
-        options.UseInMemoryDatabase("Staff"));
-}
-else
-{
-    builder.Services.AddDbContext<LunchContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("LunchContext") ?? throw new InvalidOperationException("Connection string 'LunchContext' not found.")));
-
-    builder.Services.AddDbContext<SocialEventsContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SocialEventsContext") ?? throw new InvalidOperationException("Connection string 'SocialEventsContext' not found.")));
-
-    builder.Services.AddDbContext<StaffContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("StaffContext") ?? throw new InvalidOperationException("Connection string 'StaffContext' not found.")));
-}
+builder.Services.AddDbContext<StaffContext>(options =>
+    options.UseSqlServer(staffDbConnectionString ?? throw new InvalidOperationException("Connection string 'StaffContext' not found.")));
 
 // Register repositories for dependency injection
 builder.Services.AddScoped<ILunchRepository, LunchRepository>();
