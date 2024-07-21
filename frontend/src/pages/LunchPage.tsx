@@ -64,7 +64,8 @@ const LunchPage: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
   const [validation, setValidation] = useState({ category: false, name: false, time: false });
-  const [data, setData] = useState<Data[]>([]);
+  const [foodItems, setFoodItems] = useState<Data[]>([]);
+  const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,7 +83,10 @@ const LunchPage: React.FC = () => {
         clearTimeout(timeout);
 
         console.log('API Response:', response.data); // Log the API response
-        setData(response.data);
+        const food = response.data.filter(item => item.category === 'Food');
+        const coffee = response.data.filter(item => item.category === 'Coffee');
+        setFoodItems(food);
+        setCoffeeItems(coffee);
         setLoading(false);
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -142,7 +146,7 @@ const LunchPage: React.FC = () => {
                 <Typography variant="h5">Food</Typography>
               </Box>
               <Grid container spacing={2} justifyContent="center">
-                {data.map((item) => (
+                {foodItems.map((item) => (
                   <Grid item key={item.id}>
                     <InformationCard
                       poster={item.poster}
@@ -161,7 +165,7 @@ const LunchPage: React.FC = () => {
                 <Typography variant="h5">Coffee</Typography>
               </Box>
               <Grid container spacing={2} justifyContent="center">
-                {data.map((item) => (
+                {coffeeItems.map((item) => (
                   <Grid item key={item.id}>
                     <InformationCard
                       poster={item.poster}
