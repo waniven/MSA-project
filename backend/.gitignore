@@ -1,1 +1,16 @@
 .env
+bin/
+obj/
+
+//IDE-specific
+*.swp
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+*.log
+*.mdf
+*.ldf
