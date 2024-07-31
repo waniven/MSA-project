@@ -119,11 +119,11 @@ const SocialEventsPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const isValid = name && date && time && location;
+    const isValid = name && date && location; // Remove time from validation check
     setValidation({
       name: !name,
       date: !date,
-      time: !time,
+      time: false,
       location: !location,
     });
 
@@ -241,9 +241,6 @@ const SocialEventsPage: React.FC = () => {
               style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setTime(e.target.value)}
-            required
-            error={validation.time}
-            helperText={validation.time ? 'Please enter a time' : ''}
             inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
           />
           <TextField

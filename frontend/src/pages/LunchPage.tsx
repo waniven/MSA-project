@@ -59,10 +59,11 @@ const LunchPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
+  const [name, setName] = useState('');
   const [time, setTime] = useState(''); // Set default value to empty string
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
-  const [validation, setValidation] = useState({ category: false, time: false });
+  const [validation, setValidation] = useState({ category: false, name: false, time: false });
   const [foodItems, setFoodItems] = useState<Data[]>([]);
   const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -108,14 +109,15 @@ const LunchPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setValidation({ category: false, time: false });
+    setValidation({ category: false, name: false, time: false });
   };
 
   const handleSubmit = async () => {
-    const isValid = category && time;
+    const isValid = category && name; // Remove time from validation check
     setValidation({
       category: !category,
-      time: !time,
+      name: !name,
+      time: false,
     });
 
     if (isValid) {
@@ -249,6 +251,20 @@ const LunchPage: React.FC = () => {
           <TextField
             fullWidth
             margin="dense"
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            sx={{ marginBottom: 1, color: theme.palette.text.primary }}
+            required
+            error={validation.name}
+            helperText={validation.name ? 'Please enter a name' : ''}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
+          />
+          <TextField
+            fullWidth
+            margin="dense"
             label="Time"
             type="time"
             placeholder="--:-- --"
@@ -259,10 +275,7 @@ const LunchPage: React.FC = () => {
             }}
             onChange={(e) => setTime(e.target.value)}
             sx={{ marginBottom: 1, color: theme.palette.text.primary }}
-            required
-            error={validation.time}
-            helperText={validation.time ? 'Please enter a time' : ''}
-            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary }, placeholder: "--:-- --" }} // 5 min
           />
           <TextField
             fullWidth
