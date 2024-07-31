@@ -54,12 +54,12 @@ const SocialEventsPage: React.FC = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [name, setName] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');  // Set default value to empty string
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10)); // Set default value to current date
+  const [time, setTime] = useState('12:30');  // Set default value to 12:30 PM
   const [location, setLocation] = useState('');
   const [details, setDetails] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [validation, setValidation] = useState({ name: false, date: false, time: false, location: false });
+  const [validation, setValidation] = useState({ name: false, location: false });
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,10 +88,10 @@ const SocialEventsPage: React.FC = () => {
     setOpen(false);
     setIsEdit(false);
     setSelectedEvent(null);
-    setValidation({ name: false, date: false, time: false, location: false });
+    setValidation({ name: false, location: false });
     setName('');
-    setDate('');
-    setTime('');
+    setDate(new Date().toISOString().slice(0, 10)); // Reset date to default value
+    setTime('12:30'); // Reset time to default value
     setLocation('');
     setDetails('');
     setImage(null);
@@ -119,11 +119,9 @@ const SocialEventsPage: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const isValid = name && date && location; // Remove time from validation check
+    const isValid = name && location; // Remove date and time from validation check
     setValidation({
       name: !name,
-      date: !date,
-      time: false,
       location: !location,
     });
 
@@ -132,7 +130,7 @@ const SocialEventsPage: React.FC = () => {
       formData.append('poster', 'testuser'); // Hardcoded for now
       formData.append('name', name);
       formData.append('date', date);
-      formData.append('time', time);
+      formData.append('time', time); // Ensure time is always included
       formData.append('location', location);
       formData.append('description', details);
       if (image) {
@@ -226,9 +224,6 @@ const SocialEventsPage: React.FC = () => {
               style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setDate(e.target.value)}
-            required
-            error={validation.date}
-            helperText={validation.date ? 'Please enter a date' : ''}
             inputProps={{ style: { color: theme.palette.text.primary } }}
           />
           <TextField
@@ -241,7 +236,7 @@ const SocialEventsPage: React.FC = () => {
               style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setTime(e.target.value)}
-            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary }, placeholder: "12:30" }} // 5 min
           />
           <TextField
             fullWidth

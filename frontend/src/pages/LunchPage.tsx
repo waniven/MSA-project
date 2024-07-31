@@ -60,10 +60,10 @@ const LunchPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
-  const [time, setTime] = useState(''); // Set default value to empty string
+  const [time, setTime] = useState('12:30'); // Set default value to 12:30 PM
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
-  const [validation, setValidation] = useState({ category: false, name: false, time: false });
+  const [validation, setValidation] = useState({ category: false, name: false });
   const [foodItems, setFoodItems] = useState<Data[]>([]);
   const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -109,7 +109,7 @@ const LunchPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setValidation({ category: false, name: false, time: false });
+    setValidation({ category: false, name: false });
   };
 
   const handleSubmit = async () => {
@@ -117,18 +117,17 @@ const LunchPage: React.FC = () => {
     setValidation({
       category: !category,
       name: !name,
-      time: false,
     });
 
     if (isValid) {
       const formData = new FormData();
       formData.append('poster', 'testuser');
       formData.append('category', category);
-      formData.append('time', time);
+      formData.append('name', name);
+      formData.append('time', time); // Ensure time is always included
       formData.append('description', description);
       if (image) {
         formData.append('image', image);
-        formData.append('imageUrl', URL.createObjectURL(image)); // Assuming imageUrl is the URL of the uploaded image
       }
 
       try {
@@ -141,9 +140,9 @@ const LunchPage: React.FC = () => {
         console.log('Post created successfully:', response.data);
         // Update the foodItems or coffeeItems state with the new post
         if (category === 'Food') {
-          setFoodItems([...foodItems, response.data[0]]);
+          setFoodItems([...foodItems, response.data]);
         } else {
-          setCoffeeItems([...coffeeItems, response.data[0]]);
+          setCoffeeItems([...coffeeItems, response.data]);
         }
         handleClose();
         window.location.href = 'http://localhost:5173/lunch'; // Redirect to the specific URL
