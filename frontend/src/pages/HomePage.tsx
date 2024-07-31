@@ -27,6 +27,12 @@ const HomePage: React.FC = () => {
     fetchData();
   }, []);
 
+  const getCurrentDate = () => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return today.toLocaleDateString(undefined, options);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -41,7 +47,7 @@ const HomePage: React.FC = () => {
         {/* Top section */}
         <Grid item xs={12}>
           <Paper elevation={6} sx={{ padding: 2 }}>
-            <h1>Today's Date</h1>
+            <h1>{getCurrentDate()}</h1>
             {/* Other components */}
           </Paper>
         </Grid>

@@ -34,8 +34,7 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
     color: theme.palette.text.primary,
   },
   '& .MuiFormHelperText-root': {
-    color: theme.palette.text.primary,
-  },
+    color: theme.palette.text.primary },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
@@ -52,6 +51,8 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
 const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');  // Set default value to empty string
@@ -85,10 +86,39 @@ const SocialEventsPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setIsEdit(false);
+    setSelectedEvent(null);
     setValidation({ name: false, date: false, time: false, location: false });
+    setName('');
+    setDate('');
+    setTime('');
+    setLocation('');
+    setDetails('');
+    setImage(null);
   };
 
-  const handleSubmit = () => {
+  const handleEditOpen = (event: any) => {
+    setSelectedEvent(event);
+    setName(event.name);
+    setDate(event.date);
+    setTime(event.time);
+    setLocation(event.location);
+    setDetails(event.description);
+    setOpen(true);
+    setIsEdit(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
+      setEvents(events.filter(event => event.id !== id));
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      setError('Error deleting event');
+    }
+  };
+
+  const handleSubmit = async () => {
     const isValid = name && date && time && location;
     setValidation({
       name: !name,
@@ -98,9 +128,39 @@ const SocialEventsPage: React.FC = () => {
     });
 
     if (isValid) {
-      // Handle the form submission logic here
-      console.log({ name, date, time, location, image, details });
-      handleClose();
+      const formData = new FormData();
+      formData.append('poster', 'testuser'); // Hardcoded for now
+      formData.append('name', name);
+      formData.append('date', date);
+      formData.append('time', time);
+      formData.append('location', location);
+      formData.append('description', details);
+      if (image) {
+        formData.append('image', image);
+        formData.append('imageUrl', URL.createObjectURL(image)); // Assuming imageUrl is the URL of the uploaded image
+      }
+
+      try {
+        if (isEdit && selectedEvent) {
+          await axios.put(`http://localhost:5022/api/SocialEvents/${selectedEvent.id}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          setEvents(events.map(event => (event.id === selectedEvent.id ? { ...selectedEvent, ...formData } : event)));
+        } else {
+          const response = await axios.post('http://localhost:5022/api/SocialEvents', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          setEvents([...events, response.data[0]]);
+        }
+        handleClose();
+      } catch (error) {
+        console.error('Error creating event:', error);
+        setError('Error creating event');
+      }
     }
   };
 
@@ -121,12 +181,15 @@ const SocialEventsPage: React.FC = () => {
             {events.map((event: any) => (
               <Grid item key={event.id}>
                 <EventCard
+                  id={event.id}
                   poster={event.poster}
                   date={event.date}
                   time={event.time}
                   location={event.location}
                   description={event.description}
                   imageUrl={event.imageUrl}
+                  onEdit={() => handleEditOpen(event)}
+                  onDelete={(id) => handleDelete(id)}
                 />
               </Grid>
             ))}
@@ -137,7 +200,7 @@ const SocialEventsPage: React.FC = () => {
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: theme.palette.text.primary }}>Add New Event</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEdit ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         <DialogContentStyled>
           <Box sx={{ marginTop: 2 }}>
             <TextField
@@ -222,7 +285,7 @@ const SocialEventsPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>Add</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>{isEdit ? 'Update' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
     </StyledPaper>
