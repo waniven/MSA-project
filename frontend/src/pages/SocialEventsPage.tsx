@@ -67,12 +67,27 @@ const SocialEventsPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5022/api/SocialEvents');
+        const source = axios.CancelToken.source();
+        const timeout = setTimeout(() => {
+          source.cancel();
+        }, 10000); // 10 seconds timeout
+
+        const response = await axios.get('http://localhost:5022/api/SocialEvents', {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeout);
+
+        console.log('API Response:', response.data); // Log the API response
         setEvents(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data');
+        if (axios.isCancel(error)) {
+          console.error('Request canceled due to timeout');
+          setError('Request timed out');
+        } else {
+          console.error('Error fetching data:', error); // Log the error
+          setError('Error fetching data');
+        }
         setLoading(false);
       }
     };
@@ -114,7 +129,6 @@ const SocialEventsPage: React.FC = () => {
       setEvents(events.filter(event => event.id !== id));
     } catch (error) {
       console.error('Error deleting event:', error);
-      setError('Error deleting event');
     }
   };
 
@@ -145,14 +159,15 @@ const SocialEventsPage: React.FC = () => {
               'Content-Type': 'multipart/form-data',
             },
           });
-          setEvents(events.map(event => (event.id === selectedEvent.id ? { ...selectedEvent, ...formData } : event)));
+          const updatedEvent = { ...selectedEvent, ...formData };
+          setEvents(events.map(event => (event.id === selectedEvent.id ? updatedEvent : event)));
         } else {
           const response = await axios.post('http://localhost:5022/api/SocialEvents', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
-          setEvents([...events, response.data[0]]);
+          setEvents([...events, response.data]);
         }
         handleClose();
       } catch (error) {
@@ -187,7 +202,7 @@ const SocialEventsPage: React.FC = () => {
                   description={event.description}
                   imageUrl={event.imageUrl}
                   onEdit={() => handleEditOpen(event)}
-                  onDelete={(id) => handleDelete(id)}
+                  onDelete={() => handleDelete(event.id)} // Fixed this line to pass id correctly
                 />
               </Grid>
             ))}
