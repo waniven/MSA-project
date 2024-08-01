@@ -43,7 +43,7 @@ namespace backend.Controllers{
         }
 
         [HttpGet("image/{id}")]
-        public async Task<IActionResult> GetImage(long id){
+        public IActionResult GetImage(long id){
             var filePath = Path.Combine("Uploads/SocialEvents", $"{id}.jpg");
             if (!System.IO.File.Exists(filePath)){
                 return NotFound();
@@ -106,7 +106,7 @@ namespace backend.Controllers{
                 System.IO.File.Delete(filePath);
             }
 
-            await _socialEventsRepository.DeleteSocialEventAsync(id);
+            await _socialEventsRepository.DeleteSocialEventAsync(id); // Pass the id to the delete method
             return NoContent();
         }
     }

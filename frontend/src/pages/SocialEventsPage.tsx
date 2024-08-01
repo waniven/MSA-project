@@ -34,8 +34,7 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
     color: theme.palette.text.primary,
   },
   '& .MuiFormHelperText-root': {
-    color: theme.palette.text.primary,
-  },
+    color: theme.palette.text.primary },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
@@ -52,13 +51,15 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
 const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [name, setName] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');  // Set default value to empty string
+  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10)); // Set default value to current date
+  const [time, setTime] = useState('12:30');  // Set default value to 12:30 PM
   const [location, setLocation] = useState('');
   const [details, setDetails] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [validation, setValidation] = useState({ name: false, date: false, time: false, location: false });
+  const [validation, setValidation] = useState({ name: false, location: false });
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,12 +67,27 @@ const SocialEventsPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5022/api/SocialEvents');
+        const source = axios.CancelToken.source();
+        const timeout = setTimeout(() => {
+          source.cancel();
+        }, 10000); // 10 seconds timeout
+
+        const response = await axios.get('http://localhost:5022/api/SocialEvents', {
+          cancelToken: source.token,
+        });
+        clearTimeout(timeout);
+
+        console.log('API Response:', response.data); // Log the API response
         setEvents(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data');
+        if (axios.isCancel(error)) {
+          console.error('Request canceled due to timeout');
+          setError('Request timed out');
+        } else {
+          console.error('Error fetching data:', error); // Log the error
+          setError('Error fetching data');
+        }
         setLoading(false);
       }
     };
@@ -85,22 +101,79 @@ const SocialEventsPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setValidation({ name: false, date: false, time: false, location: false });
+    setIsEdit(false);
+    setSelectedEvent(null);
+    setValidation({ name: false, location: false });
+    setName('');
+    setDate(new Date().toISOString().slice(0, 10)); // Reset date to default value
+    setTime('12:30'); // Reset time to default value
+    setLocation('');
+    setDetails('');
+    setImage(null);
   };
 
-  const handleSubmit = () => {
-    const isValid = name && date && time && location;
+  const handleEditOpen = (event: any) => {
+    setSelectedEvent(event);
+    setName(event.name);
+    setDate(event.date);
+    setTime(event.time);
+    setLocation(event.location);
+    setDetails(event.description);
+    setOpen(true);
+    setIsEdit(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
+      setEvents(events.filter(event => event.id !== id));
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const isValid = name && location; // Remove date and time from validation check
     setValidation({
       name: !name,
-      date: !date,
-      time: !time,
       location: !location,
     });
 
     if (isValid) {
-      // Handle the form submission logic here
-      console.log({ name, date, time, location, image, details });
-      handleClose();
+      const formData = new FormData();
+      formData.append('poster', 'testuser'); // Hardcoded for now
+      formData.append('name', name);
+      formData.append('date', date);
+      formData.append('time', time); // Ensure time is always included
+      formData.append('location', location);
+      formData.append('description', details);
+      if (image) {
+        formData.append('image', image);
+        formData.append('imageUrl', URL.createObjectURL(image)); // Assuming imageUrl is the URL of the uploaded image
+      }
+
+      try {
+        if (isEdit && selectedEvent) {
+          await axios.put(`http://localhost:5022/api/SocialEvents/${selectedEvent.id}`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          const updatedEvent = { ...selectedEvent, ...formData };
+          setEvents(events.map(event => (event.id === selectedEvent.id ? updatedEvent : event)));
+        } else {
+          const response = await axios.post('http://localhost:5022/api/SocialEvents', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          setEvents([...events, response.data]);
+        }
+        handleClose();
+      } catch (error) {
+        console.error('Error creating event:', error);
+        setError('Error creating event');
+      }
     }
   };
 
@@ -121,12 +194,15 @@ const SocialEventsPage: React.FC = () => {
             {events.map((event: any) => (
               <Grid item key={event.id}>
                 <EventCard
+                  id={event.id}
                   poster={event.poster}
                   date={event.date}
                   time={event.time}
                   location={event.location}
                   description={event.description}
                   imageUrl={event.imageUrl}
+                  onEdit={() => handleEditOpen(event)}
+                  onDelete={() => handleDelete(event.id)} // Fixed this line to pass id correctly
                 />
               </Grid>
             ))}
@@ -137,7 +213,7 @@ const SocialEventsPage: React.FC = () => {
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: theme.palette.text.primary }}>Add New Event</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEdit ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         <DialogContentStyled>
           <Box sx={{ marginTop: 2 }}>
             <TextField
@@ -163,9 +239,6 @@ const SocialEventsPage: React.FC = () => {
               style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setDate(e.target.value)}
-            required
-            error={validation.date}
-            helperText={validation.date ? 'Please enter a date' : ''}
             inputProps={{ style: { color: theme.palette.text.primary } }}
           />
           <TextField
@@ -178,10 +251,7 @@ const SocialEventsPage: React.FC = () => {
               style: { color: theme.palette.text.primary }
             }}
             onChange={(e) => setTime(e.target.value)}
-            required
-            error={validation.time}
-            helperText={validation.time ? 'Please enter a time' : ''}
-            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary }, placeholder: "12:30" }} // 5 min
           />
           <TextField
             fullWidth
@@ -222,7 +292,7 @@ const SocialEventsPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>Add</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>{isEdit ? 'Update' : 'Add'}</Button>
         </DialogActions>
       </Dialog>
     </StyledPaper>

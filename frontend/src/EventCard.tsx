@@ -1,21 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, Box, useMediaQuery } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, Box, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import axios from 'axios';
 
 interface EventCardProps {
+  id: number;
   poster: string;
   date: string;
   time: string;
   location: string;
   description: string;
   imageUrl: string | null;
+  onEdit: () => void;
+  onDelete: (id: number) => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ poster, date, time, location, description, imageUrl }) => {
+const EventCard: React.FC<EventCardProps> = ({ id, poster, date, time, location, description, imageUrl, onEdit, onDelete }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const [expanded, setExpanded] = useState(false);
   const [showReadMore, setShowReadMore] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,6 +35,29 @@ const EventCard: React.FC<EventCardProps> = ({ poster, date, time, location, des
     setExpanded(!expanded);
   };
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleEdit = () => {
+    onEdit();
+    handleMenuClose();
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
+      onDelete(id);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+    handleMenuClose();
+  };
+
   return (
     <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.default }}>
       <CardMedia
@@ -38,6 +68,28 @@ const EventCard: React.FC<EventCardProps> = ({ poster, date, time, location, des
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, maxHeight: expanded ? 'none' : 250, overflow: 'hidden' }}>
         <CardContent sx={{ flex: '1 0 auto', position: 'relative' }}>
+          <Box sx={{ position: 'absolute', top: 0, right: 0 }}>
+            <IconButton
+              aria-label="settings"
+              onClick={handleMenuOpen}
+              sx={{ color: theme.palette.text.primary }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              PaperProps={{
+                style: {
+                  maxHeight: 48 * 4.5,
+                },
+              }}
+            >
+              <MenuItem onClick={handleEdit}>Edit</MenuItem>
+              <MenuItem onClick={handleDelete}>Delete</MenuItem>
+            </Menu>
+          </Box>
           <Typography component="div" variant="h4" color={theme.palette.text.primary}>
             {poster}
           </Typography>

@@ -17,21 +17,21 @@ namespace Repositories{
             return await _context.SocialEvents.FindAsync(id);
         }
 
-        public async Task AddSocialEventAsync (SocialEvents socialEvents){
+        public async Task AddSocialEventAsync(SocialEvents socialEvents){
             await _context.SocialEvents.AddAsync(socialEvents);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateSocialEventAsync (SocialEvents socialEvents){
+        public async Task UpdateSocialEventAsync(SocialEvents socialEvents){
             _context.SocialEvents.Update(socialEvents);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteSocialEventAsync  (long id){
+        public async Task DeleteSocialEventAsync(long id){
             var socialEvent = await _context.SocialEvents.FindAsync(id);
             if (socialEvent != null){
                 _context.SocialEvents.Remove(socialEvent);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();  // Ensure this line has the await keyword
             }
         }
     }

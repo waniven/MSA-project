@@ -60,10 +60,10 @@ const LunchPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState('');
   const [name, setName] = useState('');
-  const [time, setTime] = useState(''); // Set default value to empty string
+  const [time, setTime] = useState('12:30'); // Set default value to 12:30 PM
   const [image, setImage] = useState<File | null>(null);
   const [description, setDescription] = useState('');
-  const [validation, setValidation] = useState({ category: false, name: false, time: false });
+  const [validation, setValidation] = useState({ category: false, name: false });
   const [foodItems, setFoodItems] = useState<Data[]>([]);
   const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -109,21 +109,62 @@ const LunchPage: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setValidation({ category: false, name: false, time: false });
+    setValidation({ category: false, name: false });
   };
 
-  const handleSubmit = () => {
-    const isValid = category && name && time;
+  const handleSubmit = async () => {
+    const isValid = category && name; // Remove time from validation check
     setValidation({
       category: !category,
       name: !name,
-      time: !time,
     });
 
     if (isValid) {
-      // Handle the form submission logic here
-      console.log({ category, name, time, image, description });
-      handleClose();
+      const formData = new FormData();
+      formData.append('poster', 'testuser');
+      formData.append('category', category);
+      formData.append('name', name);
+      formData.append('time', time); // Ensure time is always included
+      formData.append('description', description);
+      if (image) {
+        formData.append('image', image);
+      }
+
+      try {
+        console.log('FormData being sent:', formData);
+        const response = await axios.post('http://localhost:5022/api/Lunch', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('Post created successfully:', response.data);
+        // Update the foodItems or coffeeItems state with the new post
+        if (category === 'Food') {
+          setFoodItems([...foodItems, response.data]);
+        } else {
+          setCoffeeItems([...coffeeItems, response.data]);
+        }
+        handleClose();
+        window.location.href = 'http://localhost:5173/lunch'; // Redirect to the specific URL
+      } catch (error) {
+        console.error('Error creating post:', error);
+        if (error.response) {
+          console.error('Response data:', error.response.data);
+          console.error('Response status:', error.response.status);
+          console.error('Response headers:', error.response.headers);
+        }
+        setError('Error creating post');
+      }
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:5022/api/Lunch/${id}`);
+      setFoodItems(foodItems.filter(item => item.id !== id));
+      setCoffeeItems(coffeeItems.filter(item => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting the post:', error);
     }
   };
 
@@ -149,12 +190,14 @@ const LunchPage: React.FC = () => {
                 {foodItems.map((item) => (
                   <Grid item key={item.id}>
                     <InformationCard
+                      id={item.id}
                       poster={item.poster}
                       category={item.category}
                       time={item.time}
                       description={item.description}
                       imageUrl={item.imageUrl}
                       showImage={!!item.imageUrl} // Only show image if imageUrl is not null
+                      onDelete={() => handleDelete(item.id)}
                     />
                   </Grid>
                 ))}
@@ -168,12 +211,14 @@ const LunchPage: React.FC = () => {
                 {coffeeItems.map((item) => (
                   <Grid item key={item.id}>
                     <InformationCard
+                      id={item.id}
                       poster={item.poster}
                       category={item.category}
                       time={item.time}
                       description={item.description}
                       imageUrl={item.imageUrl}
                       showImage={!!item.imageUrl} // Only show image if imageUrl is not null
+                      onDelete={() => handleDelete(item.id)}
                     />
                   </Grid>
                 ))}
@@ -229,10 +274,7 @@ const LunchPage: React.FC = () => {
             }}
             onChange={(e) => setTime(e.target.value)}
             sx={{ marginBottom: 1, color: theme.palette.text.primary }}
-            required
-            error={validation.time}
-            helperText={validation.time ? 'Please enter a time' : ''}
-            inputProps={{ step: 300, style: { color: theme.palette.text.primary } }} // 5 min
+            inputProps={{ step: 300, style: { color: theme.palette.text.primary }, placeholder: "--:-- --" }} // 5 min
           />
           <TextField
             fullWidth
