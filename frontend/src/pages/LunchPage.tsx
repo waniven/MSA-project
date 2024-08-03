@@ -68,6 +68,8 @@ const LunchPage: React.FC = () => {
   const [coffeeItems, setCoffeeItems] = useState<Data[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Data | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,7 +105,24 @@ const LunchPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (item?: Data) => {
+    console.log('Opening dialog with item:', item);
+    if (item) {
+      setIsEditMode(true);
+      setSelectedItem(item);
+      setCategory(item.category);
+      setName(item.poster);
+      setTime(item.time);
+      setDescription(item.description);
+    } else {
+      setIsEditMode(false);
+      setSelectedItem(null);
+      setCategory('');
+      setName('');
+      setTime('12:30');
+      setDescription('');
+      setImage(null);
+    }
     setOpen(true);
   };
 
@@ -158,6 +177,53 @@ const LunchPage: React.FC = () => {
     }
   };
 
+  const handleUpdate = async () => {
+    if (selectedItem) {
+      const formData = new FormData();
+      formData.append('ID', selectedItem.id.toString());
+      formData.append('poster', selectedItem.poster); // Retain the existing poster value
+      formData.append('category', category);
+      formData.append('name', name);
+      formData.append('time', time);
+      formData.append('description', description);
+      if (image) {
+        formData.append('image', image);
+      }
+
+      // Log the data being sent for debugging
+      console.log('Updating item with ID:', selectedItem.id);
+      console.log('FormData being sent for update:', {
+        poster: selectedItem.poster,
+        category,
+        name,
+        time,
+        description,
+        image
+      });
+
+      try {
+        const response = await axios.put(`http://localhost:5022/api/Lunch/${selectedItem.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('Post updated successfully:', response.data);
+
+        // Update the foodItems or coffeeItems state with the updated post
+        if (selectedItem.category === 'Food') {
+          setFoodItems(foodItems.map(item => item.id === selectedItem.id ? response.data : item));
+        } else {
+          setCoffeeItems(coffeeItems.map(item => item.id === selectedItem.id ? response.data : item));
+        }
+        handleClose();
+        window.location.href = 'http://localhost:5173/lunch'; // Redirect to the specific URL
+      } catch (error) {
+        console.error('Error updating post:', error);
+        setError('Error updating post');
+      }
+    }
+  };
+
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`http://localhost:5022/api/Lunch/${id}`);
@@ -198,6 +264,7 @@ const LunchPage: React.FC = () => {
                       imageUrl={item.imageUrl}
                       showImage={!!item.imageUrl} // Only show image if imageUrl is not null
                       onDelete={() => handleDelete(item.id)}
+                      onEdit={() => handleClickOpen(item)} // Pass handleClickOpen to onEdit
                     />
                   </Grid>
                 ))}
@@ -219,6 +286,7 @@ const LunchPage: React.FC = () => {
                       imageUrl={item.imageUrl}
                       showImage={!!item.imageUrl} // Only show image if imageUrl is not null
                       onDelete={() => handleDelete(item.id)}
+                      onEdit={() => handleClickOpen(item)} // Pass handleClickOpen to onEdit
                     />
                   </Grid>
                 ))}
@@ -227,11 +295,11 @@ const LunchPage: React.FC = () => {
           </Grid>
         </Container>
       </Box>
-      <FloatingButton onClick={handleClickOpen}>
+      <FloatingButton onClick={() => handleClickOpen()}>
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: theme.palette.text.primary }}>Create New Lunch Plan</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEditMode ? 'Edit Lunch Plan' : 'Create New Lunch Plan'}</DialogTitle>
         <DialogContentStyled>
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 1 }} error={validation.category}>
             <InputLabel required>Category</InputLabel>
@@ -305,7 +373,9 @@ const LunchPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>Add</Button>
+          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>
+            {isEditMode ? 'Update' : 'Add'}
+          </Button>
         </DialogActions>
       </Dialog>
     </StyledPaper>

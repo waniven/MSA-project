@@ -1,42 +1,32 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, IconButton, Button, Typography, Menu, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 
 interface InformationCardProps {
   id: number;
-  showImage?: boolean;
   poster: string;
   category: string;
   time: string;
   description: string;
   imageUrl: string | null;
+  showImage?: boolean;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
 const InformationCard: React.FC<InformationCardProps> = ({
   id,
-  showImage = true,
   poster,
   category,
   time,
   description,
   imageUrl,
+  showImage = true,
   onDelete,
+  onEdit,
 }) => {
   const theme = useTheme();
-  const buttonColor = theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main;
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -49,7 +39,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
   };
 
   const handleEdit = () => {
-    // Handle edit action
+    onEdit();
     handleClose();
   };
 
@@ -57,6 +47,11 @@ const InformationCard: React.FC<InformationCardProps> = ({
     onDelete();
     handleClose();
   };
+
+  if (!poster || !category || !time || !description) {
+    console.error('Missing props:', { id, poster, category, time, description, imageUrl });
+    return null;
+  }
 
   return (
     <Card sx={{ maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
@@ -96,7 +91,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
         <Typography variant="body2" color={theme.palette.text.primary}>{description}</Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <Button variant="contained" sx={{ backgroundColor: buttonColor, color: theme.palette.getContrastText(buttonColor) }}>Join</Button>
+        <Button variant="contained" sx={{ backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main, color: theme.palette.getContrastText(theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main) }}>Join</Button>
       </CardActions>
     </Card>
   );

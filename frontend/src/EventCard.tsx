@@ -2,21 +2,21 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import axios from 'axios';
 
 interface EventCardProps {
   id: number;
   poster: string;
+  name: string;
   date: string;
   time: string;
   location: string;
   description: string;
   imageUrl: string | null;
   onEdit: () => void;
-  onDelete: (id: number) => void;
+  onDelete: () => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ id, poster, date, time, location, description, imageUrl, onEdit, onDelete }) => {
+const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, location, description, imageUrl, onEdit, onDelete }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const [expanded, setExpanded] = useState(false);
@@ -48,13 +48,8 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, date, time, location,
     handleMenuClose();
   };
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
-      onDelete(id);
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    }
+  const handleDelete = () => {
+    onDelete();
     handleMenuClose();
   };
 
