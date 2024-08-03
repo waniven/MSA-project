@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardMedia, CardContent, CardActions, Avatar, IconButton, Button, Typography, Menu, MenuItem } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface InformationCardProps {
@@ -11,7 +11,7 @@ interface InformationCardProps {
   description: string;
   imageUrl: string | null;
   showImage?: boolean;
-  compact?: boolean; // New prop to control compact view
+  compact?: boolean; // control compact view
   onDelete: () => void;
   onEdit: () => void;
 }
@@ -54,6 +54,14 @@ const InformationCard: React.FC<InformationCardProps> = ({
     console.error('Missing props:', { id, poster, category, time, description, imageUrl });
     return null;
   }
+
+  const JoinButton = styled(Button)(({ theme }) => ({
+    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
+    color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+    '&:hover': {
+      backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+    },
+  }));
 
   return (
     <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
@@ -102,7 +110,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
       </CardContent>
       {!compact && showImage && (
         <CardActions disableSpacing>
-          <Button variant="contained" sx={{ backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main, color: theme.palette.getContrastText(theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main) }}>Join</Button>
+          <JoinButton variant="contained">Join</JoinButton>
         </CardActions>
       )}
     </Card>

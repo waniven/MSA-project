@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Typography, Box, Button, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
 const Input = styled('input')({
   display: 'none',
 });
 
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
+  color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+  '&:hover': {
+    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+  },
+}));
+
 const ProfilePage: React.FC = () => {
+  const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [aboutText, setAboutText] = useState("A brief description about the person.");
   const [image, setImage] = useState<string | null>(null);
@@ -60,9 +69,9 @@ const ProfilePage: React.FC = () => {
                     type="file"
                     onChange={handleImageUpload}
                   />
-                  <Button variant="contained" component="span" color="primary">
+                  <StyledButton variant="contained" component="span">
                     Upload Image
-                  </Button>
+                  </StyledButton>
                 </label>
               </Box>
               <Typography variant="body1" mt={2}>Email: example@example.com</Typography>
@@ -88,14 +97,13 @@ const ProfilePage: React.FC = () => {
             ) : (
               <Typography variant="h6">{aboutText}</Typography>
             )}
-            <Button
+            <StyledButton
               variant="contained"
-              color="primary"
               onClick={handleEditToggle}
               style={{ marginTop: '16px' }}
             >
               {isEditing ? 'Save' : 'Edit'}
-            </Button>
+            </StyledButton>
           </Paper>
         </Grid>
       </Grid>
