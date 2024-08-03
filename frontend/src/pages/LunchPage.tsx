@@ -181,7 +181,7 @@ const LunchPage: React.FC = () => {
     if (selectedItem) {
       const formData = new FormData();
       formData.append('ID', selectedItem.id.toString());
-      formData.append('poster', 'testuser');
+      formData.append('poster', selectedItem.poster); // Retain the existing poster value
       formData.append('category', category);
       formData.append('name', name);
       formData.append('time', time);
@@ -193,7 +193,7 @@ const LunchPage: React.FC = () => {
       // Log the data being sent for debugging
       console.log('Updating item with ID:', selectedItem.id);
       console.log('FormData being sent for update:', {
-        poster: 'testuser',
+        poster: selectedItem.poster,
         category,
         name,
         time,
