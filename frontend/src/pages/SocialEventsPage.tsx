@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, FormHelperText } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
 import StyledPaper from '../StyledPaper';
@@ -48,19 +49,31 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
   },
 }));
 
+interface Data {
+  id: number;
+  poster: string;
+  name: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  imageUrl: string | null;
+}
+
 const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Data | null>(null);
   const [name, setName] = useState('');
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10)); // Set default value to current date
-  const [time, setTime] = useState('12:30');  // Set default value to 12:30 PM
+  const [time, setTime] = useState('12:30'); // Set default value to 12:30 PM
   const [location, setLocation] = useState('');
   const [details, setDetails] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [validation, setValidation] = useState({ name: false, location: false });
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,7 +85,7 @@ const SocialEventsPage: React.FC = () => {
           source.cancel();
         }, 10000); // 10 seconds timeout
 
-        const response = await axios.get('http://localhost:5022/api/SocialEvents', {
+        const response = await axios.get<Data[]>('http://localhost:5022/api/SocialEvents', {
           cancelToken: source.token,
         });
         clearTimeout(timeout);
@@ -95,41 +108,31 @@ const SocialEventsPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (event?: Data) => {
+    if (event) {
+      setIsEditMode(true);
+      setSelectedEvent(event);
+      setName(event.name);
+      setDate(event.date);
+      setTime(event.time);
+      setLocation(event.location);
+      setDetails(event.description);
+    } else {
+      setIsEditMode(false);
+      setSelectedEvent(null);
+      setName('');
+      setDate(new Date().toISOString().slice(0, 10));
+      setTime('12:30');
+      setLocation('');
+      setDetails('');
+      setImage(null);
+    }
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setIsEdit(false);
-    setSelectedEvent(null);
     setValidation({ name: false, location: false });
-    setName('');
-    setDate(new Date().toISOString().slice(0, 10)); // Reset date to default value
-    setTime('12:30'); // Reset time to default value
-    setLocation('');
-    setDetails('');
-    setImage(null);
-  };
-
-  const handleEditOpen = (event: any) => {
-    setSelectedEvent(event);
-    setName(event.name);
-    setDate(event.date);
-    setTime(event.time);
-    setLocation(event.location);
-    setDetails(event.description);
-    setOpen(true);
-    setIsEdit(true);
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
-      setEvents(events.filter(event => event.id !== id));
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    }
   };
 
   const handleSubmit = async () => {
@@ -149,31 +152,79 @@ const SocialEventsPage: React.FC = () => {
       formData.append('description', details);
       if (image) {
         formData.append('image', image);
-        formData.append('imageUrl', URL.createObjectURL(image)); // Assuming imageUrl is the URL of the uploaded image
       }
 
       try {
-        if (isEdit && selectedEvent) {
-          await axios.put(`http://localhost:5022/api/SocialEvents/${selectedEvent.id}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          const updatedEvent = { ...selectedEvent, ...formData };
-          setEvents(events.map(event => (event.id === selectedEvent.id ? updatedEvent : event)));
-        } else {
-          const response = await axios.post('http://localhost:5022/api/SocialEvents', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          setEvents([...events, response.data]);
-        }
+        console.log('FormData being sent:', formData);
+        const response = await axios.post('http://localhost:5022/api/SocialEvents', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('Post created successfully:', response.data);
+
+        // Update the events state with the new post
+        setEvents([...events, response.data]);
         handleClose();
+        window.location.href = 'http://localhost:5173/social-events'; // Redirect to the specific URL
       } catch (error) {
         console.error('Error creating event:', error);
         setError('Error creating event');
       }
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (selectedEvent) {
+      const formData = new FormData();
+      formData.append('ID', selectedEvent.id.toString());
+      formData.append('poster', 'testuser');
+      formData.append('name', name);
+      formData.append('date', date);
+      formData.append('time', time);
+      formData.append('location', location);
+      formData.append('description', details);
+      if (image) {
+        formData.append('image', image);
+      }
+
+      // Log the data being sent for debugging
+      console.log('Updating item with ID:', selectedEvent.id);
+      console.log('FormData being sent for update:', {
+        poster: 'testuser',
+        name,
+        date,
+        time,
+        location,
+        details,
+        image
+      });
+
+      try {
+        const response = await axios.put(`http://localhost:5022/api/SocialEvents/${selectedEvent.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log('Post updated successfully:', response.data);
+
+        // Update the events state with the updated post
+        setEvents(events.map(event => event.id === selectedEvent.id ? response.data : event));
+        handleClose();
+        window.location.href = 'http://localhost:5173/social-events'; // Redirect to the specific URL
+      } catch (error) {
+        console.error('Error updating event:', error);
+        setError('Error updating event');
+      }
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`http://localhost:5022/api/SocialEvents/${id}`);
+      setEvents(events.filter(event => event.id !== id));
+    } catch (error) {
+      console.error('Error deleting event:', error);
     }
   };
 
@@ -191,44 +242,43 @@ const SocialEventsPage: React.FC = () => {
         <Typography variant="h4" sx={{ marginBottom: 4 }}>Social Events</Typography>
         <Container maxWidth="md" sx={{ padding: 4 }}>
           <Grid container spacing={4} direction="column" justifyContent="center">
-            {events.map((event: any) => (
+            {events.map((event) => (
               <Grid item key={event.id}>
                 <EventCard
                   id={event.id}
                   poster={event.poster}
+                  name={event.name}
                   date={event.date}
                   time={event.time}
                   location={event.location}
                   description={event.description}
                   imageUrl={event.imageUrl}
-                  onEdit={() => handleEditOpen(event)}
-                  onDelete={() => handleDelete(event.id)} // Fixed this line to pass id correctly
+                  onDelete={() => handleDelete(event.id)} // Pass id correctly
+                  onEdit={() => handleClickOpen(event)}
                 />
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
-      <FloatingButton onClick={handleClickOpen}>
+      <FloatingButton onClick={() => handleClickOpen()}>
         <AddIcon />
       </FloatingButton>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEdit ? 'Edit Event' : 'Add New Event'}</DialogTitle>
+        <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEditMode ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         <DialogContentStyled>
-          <Box sx={{ marginTop: 2 }}>
-            <TextField
-              fullWidth
-              label="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              error={validation.name}
-              helperText={validation.name ? 'Please enter a name' : ''}
-              InputProps={{
-                style: { color: theme.palette.text.primary }
-              }}
-            />
-          </Box>
+          <TextField
+            fullWidth
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            error={validation.name}
+            helperText={validation.name ? 'Please enter a name' : ''}
+            InputProps={{
+              style: { color: theme.palette.text.primary }
+            }}
+          />
           <TextField
             fullWidth
             label="Date"
@@ -292,7 +342,9 @@ const SocialEventsPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>{isEdit ? 'Update' : 'Add'}</Button>
+          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>
+            {isEditMode ? 'Update' : 'Add'}
+          </Button>
         </DialogActions>
       </Dialog>
     </StyledPaper>

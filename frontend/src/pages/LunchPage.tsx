@@ -106,6 +106,7 @@ const LunchPage: React.FC = () => {
   }, []);
 
   const handleClickOpen = (item?: Data) => {
+    console.log('Opening dialog with item:', item);
     if (item) {
       setIsEditMode(true);
       setSelectedItem(item);

@@ -22,7 +22,7 @@ interface InformationCardProps {
   description: string;
   imageUrl: string | null;
   onDelete: () => void;
-  onEdit: () => void; // Added onEdit prop
+  onEdit: () => void;
 }
 
 const InformationCard: React.FC<InformationCardProps> = ({
@@ -34,7 +34,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
   description,
   imageUrl,
   onDelete,
-  onEdit, // Added onEdit prop
+  onEdit,
 }) => {
   const theme = useTheme();
   const buttonColor = theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main;
@@ -51,7 +51,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
   };
 
   const handleEdit = () => {
-    onEdit(); // Call onEdit when the edit action is triggered
+    onEdit();
     handleClose();
   };
 
@@ -59,6 +59,9 @@ const InformationCard: React.FC<InformationCardProps> = ({
     onDelete();
     handleClose();
   };
+
+  // Logging the props for debugging
+  console.log('InformationCard Props:', { id, showImage, poster, category, time, description, imageUrl, onDelete, onEdit });
 
   return (
     <Card sx={{ maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
