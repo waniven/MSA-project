@@ -11,6 +11,7 @@ interface InformationCardProps {
   description: string;
   imageUrl: string | null;
   showImage?: boolean;
+  compact?: boolean; // New prop to control compact view
   onDelete: () => void;
   onEdit: () => void;
 }
@@ -23,6 +24,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
   description,
   imageUrl,
   showImage = true,
+  compact = false,
   onDelete,
   onEdit,
 }) => {
@@ -54,32 +56,40 @@ const InformationCard: React.FC<InformationCardProps> = ({
   }
 
   return (
-    <Card sx={{ maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
+    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
       <CardHeader
-        avatar={<Avatar sx={{ bgcolor: '#BDBDBD' }} aria-label="info">{poster.charAt(0).toUpperCase()}</Avatar>}
+        avatar={
+          showImage && (
+            <Avatar sx={{ bgcolor: '#BDBDBD' }} aria-label="info">
+              {poster.charAt(0).toUpperCase()}
+            </Avatar>
+          )
+        }
         action={
-          <>
-            <IconButton
-              aria-label="settings"
-              sx={{ color: theme.palette.text.primary }}
-              onClick={handleClick}
-            >
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              PaperProps={{
-                style: {
-                  maxHeight: 48 * 4.5,
-                },
-              }}
-            >
-              <MenuItem onClick={handleEdit}>Edit</MenuItem>
-              <MenuItem onClick={handleDelete}>Delete</MenuItem>
-            </Menu>
-          </>
+          !compact && showImage && (
+            <>
+              <IconButton
+                aria-label="settings"
+                sx={{ color: theme.palette.text.primary }}
+                onClick={handleClick}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                PaperProps={{
+                  style: {
+                    maxHeight: 48 * 4.5,
+                  },
+                }}
+              >
+                <MenuItem onClick={handleEdit}>Edit</MenuItem>
+                <MenuItem onClick={handleDelete}>Delete</MenuItem>
+              </Menu>
+            </>
+          )
         }
         title={<Typography variant="h6" color={theme.palette.text.primary}>{category}</Typography>}
         subheader={<Typography variant="body2" color={theme.palette.text.primary}>{time}</Typography>}
@@ -90,9 +100,11 @@ const InformationCard: React.FC<InformationCardProps> = ({
       <CardContent>
         <Typography variant="body2" color={theme.palette.text.primary}>{description}</Typography>
       </CardContent>
-      <CardActions disableSpacing>
-        <Button variant="contained" sx={{ backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main, color: theme.palette.getContrastText(theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main) }}>Join</Button>
-      </CardActions>
+      {!compact && showImage && (
+        <CardActions disableSpacing>
+          <Button variant="contained" sx={{ backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main, color: theme.palette.getContrastText(theme.components?.MuiAppBar?.styleOverrides?.root.hoverColor || theme.palette.primary.main) }}>Join</Button>
+        </CardActions>
+      )}
     </Card>
   );
 };
