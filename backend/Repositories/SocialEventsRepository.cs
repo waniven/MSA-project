@@ -31,7 +31,7 @@ namespace Repositories{
             var socialEvent = await _context.SocialEvents.FindAsync(id);
             if (socialEvent != null){
                 _context.SocialEvents.Remove(socialEvent);
-                await _context.SaveChangesAsync();  // Ensure this line has the await keyword
+                await _context.SaveChangesAsync();  
             }
         }
     }
