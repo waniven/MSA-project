@@ -59,7 +59,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
         component="img"
         sx={{ width: isSmallScreen ? '100%' : 250, height: 250 }}
         image={imageUrl || 'https://via.placeholder.com/250'}
-        alt={poster}
+        alt={name}  // Use name here
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, maxHeight: expanded ? 'none' : 250, overflow: 'hidden' }}>
         <CardContent sx={{ flex: '1 0 auto', position: 'relative' }}>
@@ -86,7 +86,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
             </Menu>
           </Box>
           <Typography component="div" variant="h4" color={theme.palette.text.primary}>
-            {poster}
+            {name}
           </Typography>
           <Typography variant="h6" color="text.primary" component="div">
             {date} - {time}
