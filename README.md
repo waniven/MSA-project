@@ -1,4 +1,2 @@
 ## NZMSA fullstack webapp 2024 
-currently this is a base app that dose nothing, just simple backend and frontend that are not connected.
-Am working on getting the frontend looking how i need it, then will work on backend and connect the two. 
-Lots of db pulling and displaying, this I still need to learn and investigate
+This webapp is for staff in companies. It allows staff to post their lunch and coffee meetups, to encourage them to be more social. The social events page is there for people to post social events like Christmas lunch and other events as such. 
