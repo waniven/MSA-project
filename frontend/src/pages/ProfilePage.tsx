@@ -19,7 +19,7 @@ const ProfilePage: React.FC = () => {
     email: '',
     department: '',
     office: '',
-    phoneExtention: '',
+    phoneExtension: '',
     phoneNumber: '',
   });
   const defaultImage = 'https://via.placeholder.com/200';
@@ -34,7 +34,7 @@ const ProfilePage: React.FC = () => {
           email: userData.email,
           department: userData.department,
           office: userData.office,
-          phoneExtention: userData.phoneExtention, 
+          phoneExtension: userData.phoneExtension, 
           phoneNumber: userData.phoneNumber,
         });
         setAboutText(userData.about);
@@ -55,7 +55,7 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('phoneExtention', user.phoneExtention);
+      formData.append('PhoneExtension', user.phoneExtension);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
 
@@ -103,10 +103,9 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('PhoneExtension', user.phoneExtention);
+      formData.append('PhoneExtension', user.phoneExtension);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
-
       formData.append('Image', newImage);
 
       try {
@@ -168,14 +167,14 @@ const ProfilePage: React.FC = () => {
                       Save Image
                     </StyledButton>
                   ) : (
-                    <StyledButton variant="contained">
+                    <StyledButton variant="contained" component="span">
                       Upload Image
                     </StyledButton>
                   )}
                 </label>
               </Box>
               <Typography variant="body1" mt={2} mb={1}>Email: {user.email}</Typography>
-              <Typography variant="body1" mb={1}>Phone Extension: {user.phoneExtention}</Typography>
+              <Typography variant="body1" mb={1}>Phone Extension: {user.phoneExtension}</Typography>
               <Typography variant="body1" mb={1}>Phone Number: {user.phoneNumber}</Typography>
             </Box>
           </Paper>
@@ -186,7 +185,7 @@ const ProfilePage: React.FC = () => {
             <Typography variant="h5">{user.department}</Typography>
             <Typography variant="h5"><strong>Role</strong></Typography>
             <Typography variant="h5">{user.role}</Typography>
-            <Typography variant="h5"><strong>Office</strong></Typography>
+            <Typography variant="h5"><strong>Office:</strong></Typography>
             <Typography variant="h5">{user.office}</Typography>
             <Typography variant="h5"><strong>About</strong></Typography>
             {isEditing ? (
