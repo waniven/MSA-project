@@ -55,11 +55,15 @@ const InformationCard: React.FC<InformationCardProps> = ({
     return null;
   }
 
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
   const JoinButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.getContrastText(theme.palette.primary.main),
+    backgroundColor: buttonMainColor,
+    color: theme.palette.getContrastText(buttonMainColor),
     '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: buttonHighlightColor,
     },
   }));
 

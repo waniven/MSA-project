@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Typography, Box, Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 
 const Input = styled('input')({
   display: 'none',
 });
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.getContrastText(theme.palette.primary.main),
-  '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
-  },
-}));
-
 const ProfilePage: React.FC = () => {
+  const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [aboutText, setAboutText] = useState("A brief description about the person.");
   const [image, setImage] = useState<string | null>(null);
@@ -128,6 +122,18 @@ const ProfilePage: React.FC = () => {
       }
     }
   };
+
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
+  const StyledButton = styled(Button)(({ theme }) => ({
+    backgroundColor: buttonMainColor,
+    color: theme.palette.getContrastText(buttonMainColor),
+    '&:hover': {
+      backgroundColor: buttonHighlightColor,
+    },
+  }));
 
   return (
     <Box p={4}>

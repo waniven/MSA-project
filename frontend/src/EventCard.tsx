@@ -53,6 +53,10 @@ const EventCard: React.FC<EventCardProps> = ({ name, date, time, location, descr
     handleMenuClose();
   };
 
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
   return (
     <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.default }}>
       <CardMedia
@@ -114,7 +118,16 @@ const EventCard: React.FC<EventCardProps> = ({ name, date, time, location, descr
         </CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pl: 2, pr: 2, pb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button variant="contained" sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.primary.main) }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: buttonMainColor,
+                color: theme.palette.getContrastText(buttonMainColor),
+                '&:hover': {
+                  backgroundColor: buttonHighlightColor,
+                },
+              }}
+            >
               Attend
             </Button>
           </Box>
@@ -123,8 +136,11 @@ const EventCard: React.FC<EventCardProps> = ({ name, date, time, location, descr
               <Button
                 onClick={handleReadMore}
                 sx={{
-                  color: theme.palette.primary.main,
-                  textTransform: 'none' // To keep text as is
+                  color: buttonMainColor,
+                  textTransform: 'none', // To keep text as is
+                  '&:hover': {
+                    color: buttonHighlightColor,
+                  },
                 }}
               >
                 {expanded ? 'Read Less' : 'Read More'}

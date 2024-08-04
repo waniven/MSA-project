@@ -33,8 +33,8 @@ const lightTheme = createTheme({
       secondary: '#000000',
     },
     button: {
-      main: '#007bff',
-      highlight: '#0056b3',
+      main: '#1251b0',
+      highlight: '#0f408a',
     },
   },
   components: {
@@ -63,8 +63,8 @@ const darkTheme = createTheme({
       secondary: '#ffffff',
     },
     button: {
-      main: '#28a745',
-      highlight: '#218838',
+      main: '#2f4f83',
+      highlight: '#22395e',
     },
   },
   components: {

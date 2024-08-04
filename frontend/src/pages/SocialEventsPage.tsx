@@ -10,10 +10,10 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
   bottom: 25,
   right: 25,
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: theme.palette.button?.main || theme.palette.primary.main,
   color: '#ffffff',
   '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark,
   },
   [theme.breakpoints.down('md')]: {
     bottom: 10,
@@ -336,7 +336,7 @@ const SocialEventsPage: React.FC = () => {
             variant="contained"
             component="label"
             fullWidth
-            sx={{ marginTop: 1, backgroundColor: theme.palette.primary.main, color: '#ffffff !important' }}
+            sx={{ marginTop: 1, backgroundColor: theme.palette.button?.main || theme.palette.primary.main, color: '#ffffff !important', '&:hover': { backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark } }}
           >
             Upload Image
             <input
@@ -348,7 +348,7 @@ const SocialEventsPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.primary.main) }}>
+          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.palette.button?.main || theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.button?.main || theme.palette.primary.main), '&:hover': { backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark } }}>
             {isEditMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
