@@ -64,7 +64,7 @@ const InformationCard: React.FC<InformationCardProps> = ({
   }));
 
   return (
-    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.palette.background.paper }}>
+    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.palette.background.default }}>
       <CardHeader
         avatar={
           showImage && (

@@ -16,7 +16,7 @@ interface EventTimelineProps {
 
 const EventTimeline: React.FC<EventTimelineProps> = ({ events }) => {
   const theme = useTheme();
-  const elementColor = theme.palette.background.paper; // Use a valid theme property
+  const elementColor = theme.palette.background.default; 
 
   return (
     <List>

@@ -54,7 +54,7 @@ const EventCard: React.FC<EventCardProps> = ({ name, date, time, location, descr
   };
 
   return (
-    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.paper }}>
+    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.default }}>
       <CardMedia
         component="img"
         sx={{ width: isSmallScreen ? '100%' : 250, height: 250 }}
