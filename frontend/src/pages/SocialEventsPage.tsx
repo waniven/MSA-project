@@ -22,6 +22,13 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   },
 }));
 
+const DialogStyled = styled(Dialog)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element,
+    color: theme.palette.text.primary,
+  },
+}));
+
 const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -35,7 +42,8 @@ const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
     color: theme.palette.text.primary,
   },
   '& .MuiFormHelperText-root': {
-    color: theme.palette.text.primary },
+    color: theme.palette.text.primary,
+  },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: theme.palette.mode === 'dark' ? '#ffffff' : 'inherit',
@@ -264,7 +272,7 @@ const SocialEventsPage: React.FC = () => {
       <FloatingButton onClick={() => handleClickOpen()}>
         <AddIcon />
       </FloatingButton>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogStyled open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEditMode ? 'Edit Event' : 'Add New Event'}</DialogTitle>
         <DialogContentStyled>
           <TextField
@@ -346,7 +354,7 @@ const SocialEventsPage: React.FC = () => {
             {isEditMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
-      </Dialog>
+      </DialogStyled>
     </StyledPaper>
   );
 };

@@ -37,7 +37,7 @@ const DevPage: React.FC = () => {
     <Container sx={{ marginTop: 4 }}>
       <Paper elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
         <Typography variant="h4" align="center">
-          Develop Department
+          Development Department
         </Typography>
       </Paper>
       <Grid container spacing={4}>
@@ -49,7 +49,7 @@ const DevPage: React.FC = () => {
               role={member.role}
               office={member.office}
               email={member.email}
-              phoneExtension={member.phoneExtension}
+              phoneExtension={member.phoneExtention}
               phoneNumber={member.phoneNumber}
               about={member.about}
             />

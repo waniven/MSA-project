@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface EventCardProps {
@@ -54,7 +54,7 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
   };
 
   return (
-    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.default }}>
+    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element }}>
       <CardMedia
         component="img"
         sx={{ width: isSmallScreen ? '100%' : 250, height: 250 }}

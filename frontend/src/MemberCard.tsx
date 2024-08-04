@@ -18,6 +18,8 @@ const MemberCard: React.FC<MemberCardProps> = ({ image, name, role, office, emai
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const textRef = useRef<HTMLDivElement>(null);
 
+  const placeholderImage = 'https://via.placeholder.com/250';
+
   useEffect(() => {
     if (textRef.current) {
       // Handle any additional effects if needed when the text overflows
@@ -30,7 +32,7 @@ const MemberCard: React.FC<MemberCardProps> = ({ image, name, role, office, emai
         <CardMedia
           component="img"
           sx={{ width: '100%', height: 200, objectFit: 'cover' }}
-          image={image}
+          image={image || placeholderImage}
           alt={name}
         />
         <Box sx={{ textAlign: 'center', p: 2 }}>

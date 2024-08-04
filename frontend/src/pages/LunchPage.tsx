@@ -21,6 +21,13 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   },
 }));
 
+const DialogStyled = styled(Dialog)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element,
+    color: theme.palette.text.primary,
+  },
+}));
+
 const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
   color: theme.palette.text.primary,
   '& .MuiFormControl-root, & .MuiInputLabel-root, & .MuiInputBase-root, & .MuiButton-root': {
@@ -298,7 +305,7 @@ const LunchPage: React.FC = () => {
       <FloatingButton onClick={() => handleClickOpen()}>
         <AddIcon />
       </FloatingButton>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogStyled open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ color: theme.palette.text.primary }}>{isEditMode ? 'Edit Lunch Plan' : 'Create New Lunch Plan'}</DialogTitle>
         <DialogContentStyled>
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 1 }} error={validation.category}>
@@ -377,7 +384,7 @@ const LunchPage: React.FC = () => {
             {isEditMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
-      </Dialog>
+      </DialogStyled>
     </StyledPaper>
   );
 };

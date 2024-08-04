@@ -42,7 +42,7 @@ const darkTheme = createTheme({
         },
         text: {
           primary: '#ffffff', // drop down pannel text color 
-          secondary: '#000000', // Light mode secondary text color
+          secondary: '#ffffff', // Light mode secondary text color
         },
       },
       components: {
