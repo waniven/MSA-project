@@ -110,7 +110,7 @@ function ResponsiveAppBar() {
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={page.path} style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%' }}>
                       {page.name}
                     </Link>
                   </Typography>
@@ -187,16 +187,13 @@ function ResponsiveAppBar() {
                       handleLogout();
                     }
                   }}
+                  component={Link}
+                  to={setting.path || '#'}
+                  style={{ width: '100%' }}
                 >
-                  {setting.path ? (
-                    <Typography textAlign="center">
-                      <Link to={setting.path} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        {setting.name}
-                      </Link>
-                    </Typography>
-                  ) : (
-                    <Typography textAlign="center">{setting.name}</Typography>
-                  )}
+                  <Typography textAlign="center" style={{ width: '100%' }}>
+                    {setting.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
