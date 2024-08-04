@@ -56,15 +56,15 @@ const InformationCard: React.FC<InformationCardProps> = ({
   }
 
   const JoinButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-    color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.getContrastText(theme.palette.primary.main),
     '&:hover': {
-      backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+      backgroundColor: theme.palette.primary.dark,
     },
   }));
 
   return (
-    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
+    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.palette.background.paper }}>
       <CardHeader
         avatar={
           showImage && (

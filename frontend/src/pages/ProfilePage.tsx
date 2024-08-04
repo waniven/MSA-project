@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Typography, Box, Button, TextField } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import axios from 'axios';
 
 const Input = styled('input')({
@@ -8,15 +8,14 @@ const Input = styled('input')({
 });
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-  color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.getContrastText(theme.palette.primary.main),
   '&:hover': {
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+    backgroundColor: theme.palette.primary.dark,
   },
 }));
 
 const ProfilePage: React.FC = () => {
-  const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [aboutText, setAboutText] = useState("A brief description about the person.");
   const [image, setImage] = useState<string | null>(null);
@@ -62,7 +61,7 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('PhoneExtension', user.phoneExtension);
+      formData.append('PhoneExtension', user.phoneExtention);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
 
@@ -80,7 +79,6 @@ const ProfilePage: React.FC = () => {
         setNewImage(null);
       } catch (error) {
         console.error('Error updating user profile:', error);
-        console.error('Error details:', error.response?.data);
       }
     }
     setIsEditing(!isEditing);
@@ -111,7 +109,7 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('phoneExtention', user.phoneExtention);
+      formData.append('PhoneExtension', user.phoneExtention);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
 
@@ -127,7 +125,6 @@ const ProfilePage: React.FC = () => {
         setNewImage(null);
       } catch (error) {
         console.error('Error updating user profile image:', error);
-        console.error('Error details:', error.response?.data);
       }
     }
   };
@@ -165,7 +162,7 @@ const ProfilePage: React.FC = () => {
                       Save Image
                     </StyledButton>
                   ) : (
-                    <StyledButton variant="contained" component="span">
+                    <StyledButton variant="contained">
                       Upload Image
                     </StyledButton>
                   )}

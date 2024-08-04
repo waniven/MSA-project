@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 const departments = ['HR', 'Marketing', 'Sales', 'Legal', 'IT', 'Development'];
 
 const StaffDirectoryPage: React.FC = () => {
-  const today = new Date().toLocaleDateString();
 
   return (
     <Container sx={{ marginTop: 4 }}>

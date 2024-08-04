@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Fab, Grid, Box, Typography, Container, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme, styled } from '@mui/material/styles';
@@ -11,10 +10,10 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
   bottom: 25,
   right: 25,
-  backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
+  backgroundColor: theme.palette.primary.main,
   color: '#ffffff',
   '&:hover': {
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+    backgroundColor: theme.palette.primary.dark,
   },
   [theme.breakpoints.down('md')]: {
     bottom: 10,
@@ -24,7 +23,7 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
 
 const DialogStyled = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element,
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
   },
 }));
@@ -70,7 +69,6 @@ interface Data {
 
 const SocialEventsPage: React.FC = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Data | null>(null);
@@ -338,7 +336,7 @@ const SocialEventsPage: React.FC = () => {
             variant="contained"
             component="label"
             fullWidth
-            sx={{ marginTop: 1, backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: '#ffffff !important' }}
+            sx={{ marginTop: 1, backgroundColor: theme.palette.primary.main, color: '#ffffff !important' }}
           >
             Upload Image
             <input
@@ -350,7 +348,7 @@ const SocialEventsPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>
+          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.primary.main) }}>
             {isEditMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>

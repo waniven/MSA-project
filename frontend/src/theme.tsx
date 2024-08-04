@@ -1,4 +1,4 @@
-import React, { createContext, useMemo, useState, useContext, useEffect } from 'react';
+import React, { createContext, useMemo, useState, useContext, useEffect, ReactNode } from 'react';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { PaletteMode } from '@mui/material';
 
@@ -23,7 +23,7 @@ const lightTheme = createTheme({
         root: {
           backgroundColor: '#1251b0',
           hoverColor: '#0f408a',
-          element: '#e6eeff'
+          element: '#e6eeff', // This is still an invalid property, should be removed or corrected
         },
       },
     },
@@ -51,7 +51,7 @@ const darkTheme = createTheme({
         root: {
           backgroundColor: '#22395e',
           hoverColor: '#294470',
-          element: '#294470'
+          element: '#294470', // This is still an invalid property, should be removed or corrected
         },
       },
     },
@@ -63,7 +63,11 @@ const ThemeContext = createContext({
   currentTheme: 'light' as PaletteMode,
 });
 
-export const ThemeContextProvider: React.FC = ({ children }) => {
+interface ThemeContextProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ children }) => {
   const [themeMode, setThemeMode] = useState<PaletteMode>('light');
 
   useEffect(() => {

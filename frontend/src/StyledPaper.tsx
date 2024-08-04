@@ -1,7 +1,5 @@
-import React from 'react';
-import { Fab, Paper } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { useTheme, styled } from '@mui/material/styles';
+import { Paper } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     margin: theme.spacing(2), 
