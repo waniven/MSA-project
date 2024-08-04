@@ -2,6 +2,22 @@ import React, { createContext, useMemo, useState, useContext, useEffect, ReactNo
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { PaletteMode } from '@mui/material';
 
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    button?: {
+      main: string;
+      highlight: string;
+    };
+  }
+
+  interface PaletteOptions {
+    button?: {
+      main: string;
+      highlight: string;
+    };
+  }
+}
+
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
@@ -16,14 +32,16 @@ const lightTheme = createTheme({
       primary: '#000000',
       secondary: '#000000',
     },
+    button: {
+      main: '#007bff',
+      highlight: '#0056b3',
+    },
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#1251b0',
-          hoverColor: '#0f408a',
-          element: '#e6eeff', // This is still an invalid property, should be removed or corrected
         },
       },
     },
@@ -44,14 +62,16 @@ const darkTheme = createTheme({
       primary: '#ffffff',
       secondary: '#ffffff',
     },
+    button: {
+      main: '#28a745',
+      highlight: '#218838',
+    },
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#22395e',
-          hoverColor: '#294470',
-          element: '#294470', // This is still an invalid property, should be removed or corrected
         },
       },
     },
