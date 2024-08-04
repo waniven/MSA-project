@@ -154,7 +154,7 @@ const ProfilePage: React.FC = () => {
                 style={{ backgroundImage: `url(${image || defaultImage})`, backgroundSize: 'cover' }}
               >
               </Box>
-              <Box mt={2}>
+              <Box mt={2} display="flex" alignItems="center" justifyContent="center" gap={2}>
                 <label htmlFor="upload-image">
                   <Input
                     accept="image/*"
@@ -162,16 +162,18 @@ const ProfilePage: React.FC = () => {
                     type="file"
                     onChange={handleImageUpload}
                   />
-                  {newImage ? (
-                    <StyledButton variant="contained" onClick={handleSaveImage}>
-                      Save Image
-                    </StyledButton>
-                  ) : (
-                    <StyledButton variant="contained" component="span">
-                      Upload Image
-                    </StyledButton>
-                  )}
+                  <StyledButton
+                    variant="contained"
+                    onClick={() => document.getElementById('upload-image')?.click()}
+                  >
+                    Upload Image
+                  </StyledButton>
                 </label>
+                {newImage && (
+                  <StyledButton variant="contained" onClick={handleSaveImage}>
+                    Save Image
+                  </StyledButton>
+                )}
               </Box>
               <Typography variant="body1" mt={2} mb={1}>Email: {user.email}</Typography>
               <Typography variant="body1" mb={1}>Phone Extension: {user.phoneExtension}</Typography>
