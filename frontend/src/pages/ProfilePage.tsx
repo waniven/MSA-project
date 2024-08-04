@@ -55,7 +55,7 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('PhoneExtension', user.phoneExtention);
+      formData.append('phoneExtention', user.phoneExtention);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
 
