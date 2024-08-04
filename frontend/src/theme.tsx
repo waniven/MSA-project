@@ -1,6 +1,22 @@
-import React, { createContext, useMemo, useState, useContext, useEffect } from 'react';
+import React, { createContext, useMemo, useState, useContext, useEffect, ReactNode } from 'react';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { PaletteMode } from '@mui/material';
+
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    button?: {
+      main: string;
+      highlight: string;
+    };
+  }
+
+  interface PaletteOptions {
+    button?: {
+      main: string;
+      highlight: string;
+    };
+  }
+}
 
 const lightTheme = createTheme({
   palette: {
@@ -16,14 +32,16 @@ const lightTheme = createTheme({
       primary: '#000000',
       secondary: '#000000',
     },
+    button: {
+      main: '#1251b0',
+      highlight: '#0f408a',
+    },
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#1251b0',
-          hoverColor: '#0f408a',
-          element: '#e6eeff'
         },
       },
     },
@@ -44,14 +62,16 @@ const darkTheme = createTheme({
       primary: '#ffffff',
       secondary: '#ffffff',
     },
+    button: {
+      main: '#2f4f83',
+      highlight: '#22395e',
+    },
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
           backgroundColor: '#22395e',
-          hoverColor: '#294470',
-          element: '#294470'
         },
       },
     },
@@ -63,7 +83,11 @@ const ThemeContext = createContext({
   currentTheme: 'light' as PaletteMode,
 });
 
-export const ThemeContextProvider: React.FC = ({ children }) => {
+interface ThemeContextProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeContextProvider: React.FC<ThemeContextProviderProps> = ({ children }) => {
   const [themeMode, setThemeMode] = useState<PaletteMode>('light');
 
   useEffect(() => {

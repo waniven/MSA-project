@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material';
-import { useTheme, styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface EventCardProps {
@@ -16,7 +16,7 @@ interface EventCardProps {
   onDelete: () => void;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, location, description, imageUrl, onEdit, onDelete }) => {
+const EventCard: React.FC<EventCardProps> = ({ name, date, time, location, description, imageUrl, onEdit, onDelete }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(`(max-width:800px)`); // Adjust the breakpoint as needed
   const [expanded, setExpanded] = useState(false);
@@ -53,13 +53,17 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
     handleMenuClose();
   };
 
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
   return (
-    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element }}>
+    <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row', width: '100%', mb: 2, backgroundColor: theme.palette.background.default }}>
       <CardMedia
         component="img"
         sx={{ width: isSmallScreen ? '100%' : 250, height: 250 }}
         image={imageUrl || 'https://via.placeholder.com/250'}
-        alt={name}  // Use name here
+        alt={name}
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, maxHeight: expanded ? 'none' : 250, overflow: 'hidden' }}>
         <CardContent sx={{ flex: '1 0 auto', position: 'relative' }}>
@@ -114,7 +118,16 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
         </CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pl: 2, pr: 2, pb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.hoverColor) }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: buttonMainColor,
+                color: theme.palette.getContrastText(buttonMainColor),
+                '&:hover': {
+                  backgroundColor: buttonHighlightColor,
+                },
+              }}
+            >
               Attend
             </Button>
           </Box>
@@ -123,8 +136,11 @@ const EventCard: React.FC<EventCardProps> = ({ id, poster, name, date, time, loc
               <Button
                 onClick={handleReadMore}
                 sx={{
-                  color: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
-                  textTransform: 'none' // To keep text as is
+                  color: buttonMainColor,
+                  textTransform: 'none', // To keep text as is
+                  '&:hover': {
+                    color: buttonHighlightColor,
+                  },
                 }}
               >
                 {expanded ? 'Read Less' : 'Read More'}

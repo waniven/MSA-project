@@ -55,16 +55,20 @@ const InformationCard: React.FC<InformationCardProps> = ({
     return null;
   }
 
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
   const JoinButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-    color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+    backgroundColor: buttonMainColor,
+    color: theme.palette.getContrastText(buttonMainColor),
     '&:hover': {
-      backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+      backgroundColor: buttonHighlightColor,
     },
   }));
 
   return (
-    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.components?.MuiAppBar?.styleOverrides?.root.element }}>
+    <Card sx={{ minWidth: 200, maxWidth: 345, bgcolor: theme.palette.background.default }}>
       <CardHeader
         avatar={
           showImage && (

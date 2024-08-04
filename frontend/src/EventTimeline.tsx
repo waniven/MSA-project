@@ -16,7 +16,7 @@ interface EventTimelineProps {
 
 const EventTimeline: React.FC<EventTimelineProps> = ({ events }) => {
   const theme = useTheme();
-  const elementColor = theme.components?.MuiAppBar?.styleOverrides?.root?.element || theme.palette.background.paper;
+  const elementColor = theme.palette.background.default; 
 
   return (
     <List>
@@ -24,7 +24,7 @@ const EventTimeline: React.FC<EventTimelineProps> = ({ events }) => {
         <React.Fragment key={event.id}>
           <ListItem sx={{ backgroundColor: elementColor, textAlign: 'center', marginBottom: 2 }}>
             <ListItemText 
-              primary={`${event.name}`}
+              primary={event.name}
               secondary={`${event.time} - ${new Date(event.date).toLocaleDateString()}`}
               primaryTypographyProps={{ color: theme.palette.text.primary, textAlign: 'center', fontSize: '1.2rem' }}
               secondaryTypographyProps={{ color: theme.palette.text.secondary, textAlign: 'center', fontSize: '1rem' }}

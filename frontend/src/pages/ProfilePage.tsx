@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Typography, Box, Button, TextField } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import axios from 'axios';
 
 const Input = styled('input')({
   display: 'none',
 });
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-  color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
-  '&:hover': {
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
-  },
-}));
 
 const ProfilePage: React.FC = () => {
   const theme = useTheme();
@@ -26,7 +19,7 @@ const ProfilePage: React.FC = () => {
     email: '',
     department: '',
     office: '',
-    phoneExtention: '',
+    phoneExtension: '',
     phoneNumber: '',
   });
   const defaultImage = 'https://via.placeholder.com/200';
@@ -41,7 +34,7 @@ const ProfilePage: React.FC = () => {
           email: userData.email,
           department: userData.department,
           office: userData.office,
-          phoneExtention: userData.phoneExtention, 
+          phoneExtension: userData.phoneExtension, 
           phoneNumber: userData.phoneNumber,
         });
         setAboutText(userData.about);
@@ -80,7 +73,6 @@ const ProfilePage: React.FC = () => {
         setNewImage(null);
       } catch (error) {
         console.error('Error updating user profile:', error);
-        console.error('Error details:', error.response?.data);
       }
     }
     setIsEditing(!isEditing);
@@ -111,10 +103,9 @@ const ProfilePage: React.FC = () => {
       formData.append('Email', user.email);
       formData.append('Department', user.department);
       formData.append('Office', user.office);
-      formData.append('phoneExtention', user.phoneExtention);
+      formData.append('PhoneExtension', user.phoneExtension);
       formData.append('PhoneNumber', user.phoneNumber);
       formData.append('About', aboutText);
-
       formData.append('Image', newImage);
 
       try {
@@ -127,10 +118,21 @@ const ProfilePage: React.FC = () => {
         setNewImage(null);
       } catch (error) {
         console.error('Error updating user profile image:', error);
-        console.error('Error details:', error.response?.data);
       }
     }
   };
+
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
+  const StyledButton = styled(Button)(({ theme }) => ({
+    backgroundColor: buttonMainColor,
+    color: theme.palette.getContrastText(buttonMainColor),
+    '&:hover': {
+      backgroundColor: buttonHighlightColor,
+    },
+  }));
 
   return (
     <Box p={4}>
@@ -152,7 +154,7 @@ const ProfilePage: React.FC = () => {
                 style={{ backgroundImage: `url(${image || defaultImage})`, backgroundSize: 'cover' }}
               >
               </Box>
-              <Box mt={2}>
+              <Box mt={2} display="flex" alignItems="center" justifyContent="center" gap={2}>
                 <label htmlFor="upload-image">
                   <Input
                     accept="image/*"
@@ -160,19 +162,21 @@ const ProfilePage: React.FC = () => {
                     type="file"
                     onChange={handleImageUpload}
                   />
-                  {newImage ? (
-                    <StyledButton variant="contained" onClick={handleSaveImage}>
-                      Save Image
-                    </StyledButton>
-                  ) : (
-                    <StyledButton variant="contained" component="span">
-                      Upload Image
-                    </StyledButton>
-                  )}
+                  <StyledButton
+                    variant="contained"
+                    onClick={() => document.getElementById('upload-image')?.click()}
+                  >
+                    Upload Image
+                  </StyledButton>
                 </label>
+                {newImage && (
+                  <StyledButton variant="contained" onClick={handleSaveImage}>
+                    Save Image
+                  </StyledButton>
+                )}
               </Box>
               <Typography variant="body1" mt={2} mb={1}>Email: {user.email}</Typography>
-              <Typography variant="body1" mb={1}>Phone Extension: {user.phoneExtention}</Typography>
+              <Typography variant="body1" mb={1}>Phone Extension: {user.phoneExtension}</Typography>
               <Typography variant="body1" mb={1}>Phone Number: {user.phoneNumber}</Typography>
             </Box>
           </Paper>
@@ -183,7 +187,7 @@ const ProfilePage: React.FC = () => {
             <Typography variant="h5">{user.department}</Typography>
             <Typography variant="h5"><strong>Role</strong></Typography>
             <Typography variant="h5">{user.role}</Typography>
-            <Typography variant="h5"><strong>Office</strong></Typography>
+            <Typography variant="h5"><strong>Office:</strong></Typography>
             <Typography variant="h5">{user.office}</Typography>
             <Typography variant="h5"><strong>About</strong></Typography>
             {isEditing ? (

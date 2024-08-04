@@ -9,7 +9,7 @@ const Input = styled('input')({
 });
 
 const AccountPage: React.FC = () => {
-  const { toggleTheme, currentTheme } = useThemeContext();
+  useThemeContext();
   const [displayName, setDisplayName] = useState('Current Display Name');
   const [isEditingName, setIsEditingName] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState(displayName);
@@ -37,11 +37,15 @@ const AccountPage: React.FC = () => {
 
   const theme = useTheme();
 
+  // Provide default colors in case theme.palette.button is undefined
+  const buttonMainColor = theme.palette.button?.main || theme.palette.primary.main;
+  const buttonHighlightColor = theme.palette.button?.highlight || theme.palette.primary.dark;
+
   const StyledButton = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
-    color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor),
+    backgroundColor: buttonMainColor,
+    color: theme.palette.getContrastText(buttonMainColor),
     '&:hover': {
-      backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+      backgroundColor: buttonHighlightColor,
     },
   }));
 
@@ -83,7 +87,7 @@ const AccountPage: React.FC = () => {
                     type="file"
                     onChange={handleFileUpload}
                   />
-                  <StyledButton variant="contained" component="span">
+                  <StyledButton variant="contained">
                     Upload New Image
                   </StyledButton>
                 </label>

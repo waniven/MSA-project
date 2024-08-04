@@ -10,10 +10,10 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
   position: 'fixed',
   bottom: 25,
   right: 25,
-  backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor,
+  backgroundColor: theme.palette.button?.main || theme.palette.primary.main,
   color: '#ffffff',
   '&:hover': {
-    backgroundColor: theme.components.MuiAppBar.styleOverrides.root.hoverColor,
+    backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark,
   },
   [theme.breakpoints.down('md')]: {
     bottom: 10,
@@ -23,7 +23,7 @@ const FloatingButton = styled(Fab)(({ theme }) => ({
 
 const DialogStyled = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
-    backgroundColor: theme.components?.MuiAppBar?.styleOverrides?.root?.element,
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
   },
 }));
@@ -174,11 +174,6 @@ const LunchPage: React.FC = () => {
         window.location.href = 'http://localhost:5173/lunch'; // Redirect to the specific URL
       } catch (error) {
         console.error('Error creating post:', error);
-        if (error.response) {
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-          console.error('Response headers:', error.response.headers);
-        }
         setError('Error creating post');
       }
     }
@@ -368,7 +363,7 @@ const LunchPage: React.FC = () => {
             variant="contained"
             component="label"
             fullWidth
-            sx={{ marginTop: 1, marginBottom: 1, backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: '#ffffff !important' }}
+            sx={{ marginTop: 1, marginBottom: 1, backgroundColor: theme.palette.button?.main || theme.palette.primary.main, color: '#ffffff !important', '&:hover': { backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark } }}
           >
             Upload Image
             <input
@@ -380,7 +375,7 @@ const LunchPage: React.FC = () => {
         </DialogContentStyled>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: theme.palette.text.primary }}>Cancel</Button>
-          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.components.MuiAppBar.styleOverrides.root.backgroundColor, color: theme.palette.getContrastText(theme.components.MuiAppBar.styleOverrides.root.backgroundColor) }}>
+          <Button onClick={isEditMode ? handleUpdate : handleSubmit} variant="contained" sx={{ backgroundColor: theme.palette.button?.main || theme.palette.primary.main, color: theme.palette.getContrastText(theme.palette.button?.main || theme.palette.primary.main), '&:hover': { backgroundColor: theme.palette.button?.highlight || theme.palette.primary.dark } }}>
             {isEditMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
